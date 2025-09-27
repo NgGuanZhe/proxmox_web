@@ -1,0 +1,19 @@
+# --- Virtual Environment ---
+# Ignore the virtual environment folder, which contains installed packages.
+venv/
+
+# --- Secret Configuration ---
+# NEVER commit your .env file. It contains sensitive credentials.
+.env
+
+# --- Python Cache & Bytecode ---
+# Ignore the folder where Python stores compiled bytecode.
+__pycache__/
+# Ignore compiled .pyc files.
+*.pyc
+
+# --- Common IDE/Editor and System Files ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
