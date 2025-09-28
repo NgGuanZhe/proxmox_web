@@ -5,9 +5,10 @@ from app.core.proxmox import get_proxmox_connection
 
 router = APIRouter()
 
-# The _format_vm_details function is unchanged
 def _format_vm_details(vm_config):
+    """Helper function to parse the raw config into a clean format."""
     details = {
+        "description": vm_config.get("description", ""),
         "template": vm_config.get("template", 0),
         "cpu": { "cores": vm_config.get("cores"), "sockets": vm_config.get("sockets"), "type": vm_config.get("cpu") },
         "memory_mb": vm_config.get("memory"),
@@ -36,7 +37,6 @@ def _format_vm_details(vm_config):
 
 @router.get("/vms", tags=["Virtual Machines"])
 def list_vms():
-    # This function is unchanged
     proxmox = get_proxmox_connection()
     all_vms_list = []
     try:
@@ -55,11 +55,8 @@ def list_vms():
 
 @router.post("/clone_templates", tags=["Virtual Machines"])
 def clone_all_templates():
-    # --- THIS FUNCTION HAS BEEN CORRECTED ---
     proxmox = get_proxmox_connection()
-    
     try:
-        # First, get all existing IDs to calculate the next available one
         all_vms_and_templates = []
         for node in proxmox.nodes.get():
             all_vms_and_templates.extend(proxmox.nodes(node['node']).qemu.get())
@@ -67,32 +64,21 @@ def clone_all_templates():
         existing_ids = {vm['vmid'] for vm in all_vms_and_templates}
         max_id = max([id for id in existing_ids if id >= 1000] or [999])
         next_vmid = max_id + 1
-
         cloned_vms = []
-        # Now, loop through each node to find and clone templates
+        
         for node in proxmox.nodes.get():
             node_name = node['node']
-            vms_on_node = proxmox.nodes(node_name).qemu.get()
-            
-            for template_summary in vms_on_node:
+            for template_summary in proxmox.nodes(node_name).qemu.get():
                 if template_summary.get('template') == 1:
                     template_id = template_summary['vmid']
-                    new_clone_name = "{}-clone-{}".format(template_summary['name'], next_vmid)
-
-                    # Proxmox API call to create a linked clone on the correct node
-                    proxmox.nodes(node_name).qemu(template_id).clone.post(
-                        newid=next_vmid,
-                        name=new_clone_name,
-                        full=0  # 0 means a linked clone
-                    )
-                    
-                    cloned_vms.append({"template": template_summary['name'], "new_id": next_vmid, "new_name": new_clone_name})
+                    new_clone_name = "{}-clone-{}".format(template_summary.get('name', 'template'), next_vmid)
+                    clone_description = "Cloned from template: {}".format(template_summary.get('name', 'unknown'))
+                    proxmox.nodes(node_name).qemu(template_id).clone.post(newid=next_vmid, name=new_clone_name, full=0, description=clone_description)
+                    cloned_vms.append({"template": template_summary.get('name'), "new_id": next_vmid, "new_name": new_clone_name})
                     next_vmid += 1
         
         if not cloned_vms:
             return {"message": "No templates found to clone."}
-
         return {"message": "Cloning process completed successfully.", "cloned_vms": cloned_vms}
     except Exception as e:
-        # Provide a more detailed error for debugging
         raise HTTPException(status_code=500, detail="An error occurred during cloning: {}".format(e))
