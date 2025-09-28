@@ -9,11 +9,9 @@ const router = createRouter({
       name: 'home',
       component: HomeView
     },
-    // --- THIS IS THE NEW ROUTE ---
     {
       path: '/clone',
       name: 'clone',
-      // This is a special syntax to lazy-load the page
       component: () => import('../views/CloneView.vue')
     }
   ]
