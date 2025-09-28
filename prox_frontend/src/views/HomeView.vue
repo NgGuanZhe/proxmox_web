@@ -13,6 +13,7 @@ async function fetchVMs() {
   error.value = null
   vms.value = []
   try {
+    // This line must have the /api/ prefix
     const response = await fetch('/api/vms')
     if (!response.ok) {
       throw new Error(`Server responded with status: ${response.status}`)
@@ -31,7 +32,7 @@ async function fetchVMs() {
     <h1>VM Dashboard</h1>
     <p>A simple interface to view and manage virtual machines.</p>
     <button @click="fetchVMs" :disabled="isLoading">
-      {{ isLoading ? 'Loading...' : 'Fetch VMs' }}
+      {{ isLoading ? 'Loading...' : 'Refresh VM List' }}
     </button>
   </header>
 
@@ -54,8 +55,9 @@ header {
   margin-bottom: 3rem;
 }
 button {
-  background-color: #007bff;
-  color: white;
+  background-color: var(--accent-color);
+  color: var(--bg-dark);
+  font-weight: 700;
   border: none;
   padding: 12px 24px;
   font-size: 16px;
