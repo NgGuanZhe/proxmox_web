@@ -10,6 +10,7 @@ const selectedVm = ref(null)
 const bulkActionStatus = ref(null)
 const isBulkActionLoading = ref(false)
 
+// The final, correct grouping logic
 const groupedVms = computed(() => {
   const groups = {}
   const templates = []
@@ -38,9 +39,12 @@ const groupedVms = computed(() => {
     const description = vm.hardware_details?.description || ''
     const match = description.match(/Cloned from template: (.*)/)
     
+    // If we find a match and a group for that template exists...
     if (match && match[1] && groups[match[1].trim()]) {
+      // ...add it to that group's clone list
       groups[match[1].trim()].clones.push(vm)
     } else {
+      // Otherwise, it's an "other" VM
       unassignedVMs.push(vm)
     }
   }
@@ -131,6 +135,7 @@ async function handleBulkAction(action) {
     const result = await response.json();
     if (!response.ok) throw new Error(result.detail || 'Bulk action failed.');
     bulkActionStatus.value = result.message;
+    // Wait for 3 seconds before refreshing
     setTimeout(() => { fetchVMs() }, 3000);
   } catch (e) {
     error.value = e.message;
