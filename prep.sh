@@ -9,6 +9,7 @@ echo ""
 echo "--- Backend Configuration ---"
 
 # Ask for the Proxmox details
+read -p "Enter your Proxmox Host IP (e.g., 192.168.1.100): " PROXMOX_HOST
 read -p "Enter your Proxmox User (e.g., root@pam): " PROXMOX_USER
 read -p "Enter your Proxmox API Token Name (e.g., myapp-token): " PROXMOX_TOKEN_NAME
 
@@ -31,14 +32,14 @@ fi
 
 # --- Create the backend .env file ---
 cat << EOF > .env
-PROXMOX_HOST=${IP_ADDR}
+PROXMOX_HOST=${PROXMOX_HOST}
 PROXMOX_USER=${PROXMOX_USER}
 PROXMOX_TOKEN_NAME=${PROXMOX_TOKEN_NAME}
 PROXMOX_TOKEN_VALUE=${PROXMOX_TOKEN_VALUE}
 EOF
 
 # --- Create the frontend .env file ---
-cat << EOF > frontend/.env
+cat << EOF > prox_frontend/.env
 VITE_API_TARGET=http://${IP_ADDR}:8000
 EOF
 

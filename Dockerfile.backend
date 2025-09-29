@@ -1,0 +1,16 @@
+# Start from an official Python base image
+FROM python:3.9-slim
+
+# Set the working directory inside the container
+WORKDIR /code
+
+# Copy the requirements file and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy your application code into the container
+COPY ./app /code/app
+
+# The command to run your application in production using Gunicorn
+# It will run on port 8000 inside the container
+CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000", "app.main:app"]
