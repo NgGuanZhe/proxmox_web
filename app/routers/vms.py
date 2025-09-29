@@ -7,9 +7,14 @@ from app.core.proxmox import get_proxmox_connection
 
 router = APIRouter()
 
+# Pydantic models to validate request bodies
 class VmRenameRequest(BaseModel):
     new_name: str
 
+class SnapshotRequest(BaseModel):
+    name: str
+
+# Helper functions (_find_vm_node_by_id, _format_vm_details) are unchanged
 def _find_vm_node_by_id(proxmox_conn, vmid):
     try:
         all_resources = proxmox_conn.cluster.resources.get(type='vm')
@@ -168,3 +173,47 @@ def delete_all_clones():
         return {"message": "Cleanup process completed.", "deleted_vms": deleted_vms, "errors": errors}
     except Exception as e:
         raise HTTPException(status_code=500, detail="An error occurred during cleanup: {}".format(e))
+
+@router.get("/vms/{vmid}/snapshots", tags=["Snapshots"])
+def list_snapshots(vmid: int):
+    """Gets a list of all snapshots for a specific VM."""
+    proxmox = get_proxmox_connection()
+    try:
+        node_name = _find_vm_node_by_id(proxmox, vmid)
+        if not node_name:
+            raise HTTPException(status_code=404, detail="VM with ID {} not found.".format(vmid))
+        
+        snapshots = proxmox.nodes(node_name).qemu(vmid).snapshot.get()
+        return snapshots
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/vms/{vmid}/snapshots", tags=["Snapshots"])
+def create_snapshot(vmid: int, request: SnapshotRequest):
+    """Creates a new snapshot for a VM."""
+    proxmox = get_proxmox_connection()
+    try:
+        node_name = _find_vm_node_by_id(proxmox, vmid)
+        if not node_name:
+            raise HTTPException(status_code=404, detail="VM with ID {} not found.".format(vmid))
+        
+        # Proxmox API call to create a snapshot
+        result = proxmox.nodes(node_name).qemu(vmid).snapshot.post(snapname=request.name)
+        return {"message": "Successfully created snapshot '{}' for VM {}".format(request.name, vmid), "task_id": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/vms/{vmid}/snapshots/{snapname}/rollback", tags=["Snapshots"])
+def rollback_snapshot(vmid: int, snapname: str):
+    """Restores a VM to a previous snapshot."""
+    proxmox = get_proxmox_connection()
+    try:
+        node_name = _find_vm_node_by_id(proxmox, vmid)
+        if not node_name:
+            raise HTTPException(status_code=404, detail="VM with ID {} not found.".format(vmid))
+        
+        # Proxmox API call to roll back to a snapshot
+        result = proxmox.nodes(node_name).qemu(vmid).snapshot(snapname).rollback.post()
+        return {"message": "Successfully initiated rollback to snapshot '{}' for VM {}".format(snapname, vmid), "task_id": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

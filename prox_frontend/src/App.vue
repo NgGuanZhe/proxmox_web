@@ -15,11 +15,16 @@ import { RouterLink, RouterView } from 'vue-router'
             <span class="text">VM Dashboard</span>
           </RouterLink>
         </li>
-        <!-- --- THIS IS THE NEW LINK --- -->
         <li>
           <RouterLink to="/clone">
             <span class="icon">🐑</span>
             <span class="text">Clone Templates</span>
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/snapshots">
+            <span class="icon">📸</span>
+            <span class="text">Snapshot Manager</span>
           </RouterLink>
         </li>
       </ul>
@@ -32,7 +37,7 @@ import { RouterLink, RouterView } from 'vue-router'
 </template>
 
 <style>
-/* (Global styles are unchanged) */
+/* Global styles */
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
 :root {
   --bg-dark: #212529;
@@ -49,7 +54,7 @@ body { background-color: var(--bg-dark); color: var(--text-color); font-family: 
 </style>
 
 <style scoped>
-/* (Scoped styles are unchanged) */
+/* Scoped styles */
 .app-layout { display: flex; align-items: flex-start; gap: 2.5rem; padding: 1.5rem; }
 .sidebar { width: 250px; background-color: var(--bg-light); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem 1rem; box-sizing: border-box; position: sticky; top: 1.5rem; }
 .sidebar-header h2 { margin: 0 0 2.5rem 0; color: #fff; text-align: center; font-weight: 700; letter-spacing: 1px; }
