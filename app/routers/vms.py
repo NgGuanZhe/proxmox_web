@@ -2,9 +2,26 @@ import re
 import sys
 import time
 from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 from app.core.proxmox import get_proxmox_connection
 
 router = APIRouter()
+
+class VmRenameRequest(BaseModel):
+    new_name: str
+
+def _find_vm_node_by_id(proxmox_conn, vmid):
+    try:
+        all_resources = proxmox_conn.cluster.resources.get(type='vm')
+        for resource in all_resources:
+            if resource.get('vmid') == vmid:
+                return resource.get('node')
+    except Exception:
+        for node in proxmox_conn.nodes.get():
+            for vm in proxmox_conn.nodes(node['node']).qemu.get():
+                if vm['vmid'] == vmid:
+                    return node['node']
+    return None
 
 def _format_vm_details(vm_config):
     details = { "description": vm_config.get("description", ""), "template": vm_config.get("template", 0), "cpu": { "cores": vm_config.get("cores"), "sockets": vm_config.get("sockets"), "type": vm_config.get("cpu") }, "memory_mb": vm_config.get("memory"), "boot_order": vm_config.get("boot"), "disks": [], "network_interfaces": [] }
@@ -36,6 +53,68 @@ def list_vms():
     except Exception as e: raise HTTPException(status_code=500, detail=str(e))
     return all_vms_list
 
+@router.put("/vms/{vmid}/rename", tags=["Virtual Machines"])
+def rename_vm(vmid: int, request: VmRenameRequest):
+    proxmox = get_proxmox_connection()
+    try:
+        node_name = _find_vm_node_by_id(proxmox, vmid)
+        if not node_name:
+            raise HTTPException(status_code=404, detail="VM with ID {} not found.".format(vmid))
+        proxmox.nodes(node_name).qemu(vmid).config.put(name=request.new_name)
+        return {"message": "Successfully renamed VM {} to {}".format(vmid, request.new_name)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.delete("/vms/{vmid}", tags=["Virtual Machines"])
+def delete_vm(vmid: int):
+    proxmox = get_proxmox_connection()
+    try:
+        node_name = _find_vm_node_by_id(proxmox, vmid)
+        if not node_name:
+            raise HTTPException(status_code=404, detail="VM with ID {} not found.".format(vmid))
+        vm = proxmox.nodes(node_name).qemu(vmid)
+        if vm.status.current.get()['status'] == 'running':
+            vm.status.stop.post()
+            for i in range(20):
+                time.sleep(3)
+                if vm.status.current.get()['status'] == 'stopped': break
+            else:
+                raise Exception("Timed out waiting for VM to stop.")
+        vm.delete()
+        return {"message": "Successfully deleted VM {}".format(vmid)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/vms/start_all", tags=["Virtual Machines"])
+def start_all_vms():
+    proxmox = get_proxmox_connection()
+    started_vms = []
+    try:
+        for node in proxmox.nodes.get():
+            node_name = node['node']
+            for vm in proxmox.nodes(node_name).qemu.get():
+                if vm.get('template') != 1 and vm.get('status') == 'stopped':
+                    proxmox.nodes(node_name).qemu(vm['vmid']).status.start.post()
+                    started_vms.append(vm.get('name'))
+        return {"message": "Start command sent to all stopped VMs.", "started": started_vms}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/vms/stop_all", tags=["Virtual Machines"])
+def stop_all_vms():
+    proxmox = get_proxmox_connection()
+    stopped_vms = []
+    try:
+        for node in proxmox.nodes.get():
+            node_name = node['node']
+            for vm in proxmox.nodes(node_name).qemu.get():
+                if vm.get('template') != 1 and vm.get('status') == 'running':
+                    proxmox.nodes(node_name).qemu(vm['vmid']).status.stop.post()
+                    stopped_vms.append(vm.get('name'))
+        return {"message": "Stop command sent to all running VMs.", "stopped": stopped_vms}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.post("/clone_templates", tags=["Virtual Machines"])
 def clone_all_templates():
     proxmox = get_proxmox_connection()
@@ -60,13 +139,8 @@ def clone_all_templates():
     except Exception as e:
         raise HTTPException(status_code=500, detail="An error occurred during cloning: {}".format(e))
 
-# --- THIS IS THE NEW FUNCTION ---
 @router.post("/vms/delete_clones", tags=["Virtual Machines"])
 def delete_all_clones():
-    """
-    Finds and deletes all VMs that have the 'Cloned from' tag in their description.
-    It will attempt to stop running VMs before deleting.
-    """
     proxmox = get_proxmox_connection()
     deleted_vms = []
     errors = []
@@ -76,29 +150,21 @@ def delete_all_clones():
             for vm_summary in proxmox.nodes(node_name).qemu.get():
                 vmid = vm_summary.get('vmid')
                 if not vmid: continue
-                
-                # Check the description for the tag
                 vm_config = proxmox.nodes(node_name).qemu(vmid).config.get()
                 description = vm_config.get('description', '')
                 if "Cloned from template:" in description:
-                    # This is a clone, let's delete it
                     try:
-                        # If VM is running, try to stop it first
                         if vm_summary.get('status') == 'running':
                             proxmox.nodes(node_name).qemu(vmid).status.stop.post()
-                            # Wait for it to stop (up to 30 seconds)
-                            for i in range(10):
+                            for i in range(20):
                                 time.sleep(3)
-                                current_status = proxmox.nodes(node_name).qemu(vmid).status.current.get()
-                                if current_status.get('status') == 'stopped':
-                                    break
-                        
-                        # Delete the VM
+                                if proxmox.nodes(node_name).qemu(vmid).status.current.get()['status'] == 'stopped': break
+                            else:
+                                raise Exception("Timed out waiting for VM to stop.")
                         proxmox.nodes(node_name).qemu(vmid).delete()
                         deleted_vms.append(vm_summary.get('name'))
                     except Exception as delete_error:
                         errors.append("Could not delete {}: {}".format(vm_summary.get('name'), delete_error))
-
         return {"message": "Cleanup process completed.", "deleted_vms": deleted_vms, "errors": errors}
     except Exception as e:
         raise HTTPException(status_code=500, detail="An error occurred during cleanup: {}".format(e))
