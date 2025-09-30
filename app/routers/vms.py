@@ -7,6 +7,10 @@ from app.core.proxmox import get_proxmox_connection
 
 router = APIRouter()
 
+class VmNetworkRequest(BaseModel):
+    iface: str  # e.g., net0
+    bridge: str # e.g., vmbr1
+
 # Pydantic models to validate request bodies
 class VmRenameRequest(BaseModel):
     new_name: str
@@ -14,6 +18,8 @@ class VmRenameRequest(BaseModel):
 class SnapshotRequest(BaseModel):
     name: str
 
+class LabCreateRequest(BaseModel):
+    lab_name: str
 # Helper functions (_find_vm_node_by_id, _format_vm_details) are unchanged
 def _find_vm_node_by_id(proxmox_conn, vmid):
     try:
@@ -217,3 +223,104 @@ def rollback_snapshot(vmid: int, snapname: str):
         return {"message": "Successfully initiated rollback to snapshot '{}' for VM {}".format(snapname, vmid), "task_id": result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.put("/vms/{vmid}/reconfigure_network", tags=["Virtual Machines"])
+def reconfigure_network(vmid: int, request: VmNetworkRequest):
+    proxmox = get_proxmox_connection()
+    try:
+        node_name = _find_vm_node_by_id(proxmox, vmid)
+        if not node_name:
+            raise HTTPException(status_code=404, detail="VM with ID {} not found.".format(vmid))
+
+        vm = proxmox.nodes(node_name).qemu(vmid)
+        current_config = vm.config.get()
+        net_config_str = current_config.get(request.iface)
+        
+        if not net_config_str:
+            raise HTTPException(status_code=404, detail="Network device {} not found on VM {}.".format(request.iface, vmid))
+
+        parts = net_config_str.split(',')
+        model_and_mac = parts[0]
+        new_config = "{},bridge={}".format(model_and_mac, request.bridge)
+        update_data = {request.iface: new_config}
+
+        vm.config.put(**update_data)
+        
+        return {"message": "Successfully moved {} on VM {} to bridge {}".format(request.iface, vmid, request.bridge)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# The full, correct create_lab function
+@router.post("/labs/create", tags=["Labs"])
+def create_lab(request: LabCreateRequest):
+    proxmox = get_proxmox_connection()
+    try:
+        lab_name_clean = re.sub(r'[^a-zA-Z0-9]', '', request.lab_name).lower()
+        if not lab_name_clean:
+            raise HTTPException(status_code=400, detail="Invalid lab name.")
+
+        nodes = proxmox.nodes.get()
+        if not nodes:
+            raise HTTPException(status_code=500, detail="No Proxmox nodes found.")
+        
+        # 1. Determine a valid, new bridge name
+        existing_bridges = set()
+        for node in nodes:
+            for net in proxmox.nodes(node['node']).network.get():
+                if net.get('type') == 'bridge':
+                    existing_bridges.add(net.get('iface'))
+        
+        next_bridge_num = 0
+        while True:
+            bridge_name = "vmbr{}".format(next_bridge_num)
+            if bridge_name not in existing_bridges:
+                break
+            next_bridge_num += 1
+
+        # 2. Create the new bridge on ALL nodes
+        for node in nodes:
+            node_name = node['node']
+            proxmox.nodes(node_name).network.post(type='bridge', iface=bridge_name, autostart=1, comments="Isolated network for lab: {}".format(request.lab_name))
+            time.sleep(1)
+            proxmox.nodes(node_name).network.put()
+
+        # 3. Get all VMs to calculate next ID and find templates
+        all_vms_and_templates = []
+        for node in nodes:
+            all_vms_and_templates.extend(proxmox.nodes(node['node']).qemu.get())
+        
+        existing_ids = {vm['vmid'] for vm in all_vms_and_templates}
+        max_id = max([vmid for vmid in existing_ids if vmid >= 1000] or [999])
+        next_vmid = max_id + 1
+
+        created_vms = []
+        # 4. Find and clone all templates, and reconfigure their network
+        for node in nodes:
+            node_name = node['node']
+            for template_summary in proxmox.nodes(node_name).qemu.get():
+                if template_summary.get('template') == 1:
+                    template_id = template_summary['vmid']
+                    
+                    new_clone_name = "{}-{}-{}".format(lab_name_clean, template_summary.get('name', 'vm'), next_vmid)
+                    clone_description = "Cloned from template: {}".format(template_summary.get('name', 'unknown'))
+                    
+                    # 5. Clone the VM
+                    proxmox.nodes(node_name).qemu(template_id).clone.post(newid=next_vmid, name=new_clone_name, full=0, description=clone_description)
+                    
+                    time.sleep(2) # Give a moment for the clone to be created
+                    new_vm = proxmox.nodes(node_name).qemu(next_vmid)
+                    new_vm_config = new_vm.config.get()
+                    
+                    # 6. Reconfigure the network for net0
+                    net0_config = new_vm_config.get('net0', '')
+                    if net0_config:
+                        model_and_mac = net0_config.split(',')[0]
+                        new_net0_config = "{},bridge={}".format(model_and_mac, bridge_name)
+                        new_vm.config.put(net0=new_net0_config)
+
+                    created_vms.append({"name": new_clone_name, "id": next_vmid})
+                    next_vmid += 1
+
+        return {"message": "Lab '{}' created successfully on network '{}'.".format(request.lab_name, bridge_name), "created_vms": created_vms}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="An error occurred: {}".format(e))

@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import CloneView from '../views/CloneView.vue' // Import CloneView directly
 import SnapshotView from '../views/SnapshotView.vue' // Import SnapshotView directly
+import NetworkView from '../views/NetworkView.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,6 +22,10 @@ const router = createRouter({
       path: '/snapshots',
       name: 'snapshots',
       component: SnapshotView // Use the imported component
+    },
+    { path: '/networks', 
+      name: 'networks', 
+      component: NetworkView
     }
   ]
 })

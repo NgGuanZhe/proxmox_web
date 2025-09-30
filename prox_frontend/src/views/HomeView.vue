@@ -9,6 +9,9 @@ const error = ref(null)
 const selectedVm = ref(null)
 const bulkActionStatus = ref(null)
 const isBulkActionLoading = ref(false)
+const newLabName = ref('')
+const isCreatingLab = ref(false)
+const labCreationStatus = ref(null)
 
 // The final, correct grouping logic
 const groupedVms = computed(() => {
@@ -70,6 +73,33 @@ async function fetchVMs() {
     error.value = e.message
   } finally {
     isLoading.value = false
+  }
+}
+
+async function createLab() {
+  if (!newLabName.value || newLabName.value.trim() === '') {
+    alert('Please enter a name for the new lab.');
+    return;
+  }
+  isCreatingLab.value = true;
+  error.value = null;
+  labCreationStatus.value = null;
+  try {
+    const response = await fetch('/api/labs/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lab_name: newLabName.value.trim() })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.detail || 'Lab creation failed.');
+    labCreationStatus.value = result;
+    newLabName.value = '';
+    // Refresh the dashboard to see the new VMs
+    await fetchVMs();
+  } catch(e) {
+    error.value = e.message;
+  } finally {
+    isCreatingLab.value = false;
   }
 }
 
@@ -167,6 +197,23 @@ async function handleBulkAction(action) {
     </section>
 
     <hr class="divider" />
+    <section class="action-section">
+      <h2>Create Isolated Lab</h2>
+      <p>Enter a name, and the system will create a new private network and clone all templates into it.</p>
+      <div class="create-form">
+        <input type="text" v-model="newLabName" placeholder="Enter new lab name...">
+        <button @click="createLab" :disabled="isCreatingLab">
+          {{ isCreatingLab ? 'Creating Lab...' : 'Create Lab' }}
+        </button>
+      </div>
+      <div v-if="labCreationStatus" class="status-box success">
+        <p>{{ labCreationStatus.message }}</p>
+        <ul><li v-for="vm in labCreationStatus.created_vms" :key="vm.id">{{ vm.name }} (ID: {{ vm.id }})</li></ul>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
     
     <div v-if="error" class="status-box error">
       <p><strong>Error:</strong> {{ error }}</p>

@@ -27,6 +27,12 @@ import { RouterLink, RouterView } from 'vue-router'
             <span class="text">Snapshot Manager</span>
           </RouterLink>
         </li>
+        <li>
+          <RouterLink to="/networks">
+            <span class="icon">↔️</span>
+            <span class="text">Network Manager</span>
+          </RouterLink>
+        </li>
       </ul>
     </nav>
 
