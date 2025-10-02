@@ -4,7 +4,8 @@ import CloneView from '../views/CloneView.vue' // Import CloneView directly
 import SnapshotView from '../views/SnapshotView.vue' // Import SnapshotView directly
 import NetworkView from '../views/NetworkView.vue'
 import SdnView from '../views/SdnView.vue'
-import LabCreatorView from '../views/LabCreatorView.vue'
+import LabBuilderView from '../views/LabBuilderView.vue'
+import LabPlaygroundView from '../views/LabPlaygroundView.vue'
 
 
 const router = createRouter({
@@ -33,9 +34,13 @@ const router = createRouter({
       name: 'sdn', 
       component: SdnView
     },
-    { path: '/createlab', 
-      name: 'createlab', 
-      component: LabCreatorView
+    { path: '/labbuilder', 
+      name: 'labbuilder', 
+      component: LabBuilderView
+    },
+    { path: '/playground', 
+      name: 'playground', 
+      component: LabPlaygroundView
     }
   ]
 })
