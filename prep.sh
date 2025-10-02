@@ -36,15 +36,12 @@ PROXMOX_HOST=${PROXMOX_HOST}
 PROXMOX_USER=${PROXMOX_USER}
 PROXMOX_TOKEN_NAME=${PROXMOX_TOKEN_NAME}
 PROXMOX_TOKEN_VALUE=${PROXMOX_TOKEN_VALUE}
-EOF
-
-# --- Create the frontend .env file ---
-cat << EOF > prox_frontend/.env
 VITE_API_TARGET=http://${IP_ADDR}:8000
 EOF
+
 
 echo ""
 echo "✅ Success! Your .env files have been created."
 echo "Backend .env is ready."
-echo "Frontend .env has been set with API target: http://${IP_ADDR}:8000"
+echo "Vite IP  has been set with API target: http://${IP_ADDR}:8000"
 echo ""

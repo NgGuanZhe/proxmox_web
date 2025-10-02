@@ -27,6 +27,24 @@ import { RouterLink, RouterView } from 'vue-router'
             <span class="text">Snapshot Manager</span>
           </RouterLink>
         </li>
+        <li>
+          <RouterLink to="/networks">
+            <span class="icon">↔️</span>
+            <span class="text">Network Manager</span>
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/sdn">
+            <span class="icon">🌐</span>
+            <span class="text">SDN Manager</span>
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/createlab">
+            <span class="icon">🔬</span>
+            <span class="text">Create VLAN Lab</span>
+          </RouterLink>
+        </li>
       </ul>
     </nav>
 
@@ -58,9 +76,32 @@ body { background-color: var(--bg-dark); color: var(--text-color); font-family: 
 .app-layout { display: flex; align-items: flex-start; gap: 2.5rem; padding: 1.5rem; }
 .sidebar { width: 250px; background-color: var(--bg-light); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem 1rem; box-sizing: border-box; position: sticky; top: 1.5rem; }
 .sidebar-header h2 { margin: 0 0 2.5rem 0; color: #fff; text-align: center; font-weight: 700; letter-spacing: 1px; }
-.nav-links { list-style-type: none; padding: 0; margin: 0; }
-.nav-links li a { display: flex; align-items: center; gap: 12px; color: var(--text-muted); text-decoration: none; padding: 0.8rem 1rem; border-radius: 6px; margin-bottom: 0.5rem; transition: background-color 0.2s, color 0.2s; border-left: 4px solid transparent; }
-.nav-links li a:hover { background-color: #343a40; color: white; }
-.nav-links li a.router-link-exact-active { background-color: rgba(0, 201, 167, 0.1); color: var(--accent-color); font-weight: 700; border-left-color: var(--accent-color); }
+.nav-links li a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 0.8rem 1rem;        /* consistent padding */
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  transition: background-color 0.2s, color 0.2s;
+  border-left: 4px solid transparent; /* placeholder to avoid shift */
+  box-sizing: border-box;      /* prevents layout jump */
+}
+
+.nav-links li a:hover {
+  background-color: #343a40;
+  color: white;
+}
+
+/* Active link (same sizing as normal) */
+.nav-links li a.router-link-exact-active {
+  background-color: rgba(0, 201, 167, 0.1);
+  color: var(--accent-color);
+  font-weight: 700;
+  border-left-color: var(--accent-color);
+  /* 🔑 KEEP the same padding, flex, and border-left width as default */
+}
 .main-content { flex-grow: 1; }
 </style>
