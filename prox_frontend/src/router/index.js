@@ -4,6 +4,7 @@ import CloneView from '../views/CloneView.vue' // Import CloneView directly
 import SnapshotView from '../views/SnapshotView.vue' // Import SnapshotView directly
 import NetworkView from '../views/NetworkView.vue'
 import SdnView from '../views/SdnView.vue'
+import LabCreatorView from '../views/LabCreatorView.vue'
 
 
 const router = createRouter({
@@ -31,6 +32,10 @@ const router = createRouter({
     { path: '/sdn', 
       name: 'sdn', 
       component: SdnView
+    },
+    { path: '/createlab', 
+      name: 'createlab', 
+      component: LabCreatorView
     }
   ]
 })

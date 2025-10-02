@@ -39,6 +39,12 @@ import { RouterLink, RouterView } from 'vue-router'
             <span class="text">SDN Manager</span>
           </RouterLink>
         </li>
+        <li>
+          <RouterLink to="/createlab">
+            <span class="icon">🔬</span>
+            <span class="text">Create VLAN Lab</span>
+          </RouterLink>
+        </li>
       </ul>
     </nav>
 

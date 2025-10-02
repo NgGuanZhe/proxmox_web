@@ -242,4 +242,4 @@ button:disabled { background-color: #555; color: #999; cursor: not-allowed; }
 .group-title { color: var(--accent-color); border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 0; margin-bottom: 1.5rem; }
 .golden-template-card { margin-bottom: 1.5rem; border: 2px solid #ffc107; }
 .vm-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
-</style>
+</style>s
