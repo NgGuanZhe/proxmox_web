@@ -9,15 +9,22 @@ const error = ref(null);
 const selectedVm = ref(null);
 const actionStatus = ref(null);
 
+// --- NEW GROUPING LOGIC ---
 const labPlaygroundGroups = computed(() => {
   const groups = {};
   for (const vm of vms.value) {
-    const bridge = vm.hardware_details?.network_interfaces[0]?.bridge || 'Unassigned';
-    if (bridge.startsWith('vnet')) {
-      if (!groups[bridge]) {
-        groups[bridge] = [];
+    const description = vm.hardware_details?.description || '';
+    const match = description.match(/Lab: (.*?) \| Instance: (\d+)/);
+    
+    if (match && match[1] && match[2]) {
+      const labName = match[1];
+      const instanceNum = match[2];
+      const groupName = `${labName}_cloned${instanceNum}`;
+      
+      if (!groups[groupName]) {
+        groups[groupName] = [];
       }
-      groups[bridge].push(vm);
+      groups[groupName].push(vm);
     }
   }
   return groups;
@@ -90,7 +97,7 @@ function handleViewVm(vmToShow) {
     <div v-else class="dashboard-layout">
       <div v-for="(vmList, groupName) in labPlaygroundGroups" :key="groupName" class="vm-group-column">
         <div class="group-header">
-          <h2 class="group-title">Network: {{ groupName }}</h2>
+          <h2 class="group-title">{{ groupName }}</h2>
           <button class="delete-button" @click="deleteLab(groupName)">Delete Lab</button>
         </div>
         <div class="vm-grid">

@@ -81,45 +81,68 @@ def create_vlan_lab(request: VlanLabRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail="An error occurred: {}".format(e))
 
-@router.delete("/labs/{vnet_name}", tags=["Labs"])
-def delete_lab(vnet_name: str):
+@router.delete("/labs/{lab_group_name}", tags=["Labs"])
+def delete_lab(lab_group_name: str):
     """
-    Deletes all VMs connected to a VNET, and then deletes the VNET itself.
+    Deletes all VMs in a lab group, and then deletes the VNET they are connected to.
     """
     proxmox = get_proxmox_connection()
     deleted_vms = []
+    vnet_to_delete = None
     try:
         nodes = proxmox.nodes.get()
-        # Loop through each node to find and delete VMs
+        vms_to_delete = []
+
+        # First, loop through all VMs on all nodes to identify which ones to delete
         for node in nodes:
             node_name = node['node']
             for vm_summary in proxmox.nodes(node_name).qemu.get():
                 vmid = vm_summary.get('vmid')
                 if not vmid: continue
 
-                # Now we have the correct node_name
-                vm_config = proxmox.nodes(node_name).qemu(vmid).config.get()
-                net0_config = vm_config.get('net0', '')
+                # Get the full config to read the description
+                config = proxmox.nodes(node_name).qemu(vmid).config.get()
+                desc = config.get('description', '')
+                match = re.search(r"Lab: (.*?) \| Instance: (\d+)", desc)
 
-                if "bridge={}".format(vnet_name) in net0_config:
-                    # This VM is in our lab, so delete it
-                    vm = proxmox.nodes(node_name).qemu(vmid)
-                    if vm.status.current.get()['status'] == 'running':
-                        vm.status.stop.post()
-                        # Wait for it to stop
-                        for _ in range(20):
-                            time.sleep(3)
-                            if vm.status.current.get()['status'] == 'stopped': break
-                        else:
-                            raise Exception("Timed out waiting for VM {} to stop.".format(vmid))
-                    
-                    vm.delete()
-                    deleted_vms.append(vm_summary.get('name'))
-                    time.sleep(2)
+                if match:
+                    lab_name = match.group(1)
+                    instance_num = match.group(2)
+                    current_group_name = "{}_cloned{}".format(lab_name, instance_num)
 
-        # After all VMs are deleted, delete the VNET itself
-        proxmox.cluster.sdn.vnets(vnet_name).delete()
+                    if current_group_name == lab_group_name:
+                        # Add the node info to the summary before adding it to our delete list
+                        vm_summary['node'] = node_name
+                        vms_to_delete.append(vm_summary)
+                        
+                        # Find the vnet name from the first VM we find in the group
+                        if not vnet_to_delete:
+                            net0 = config.get('net0', '')
+                            if 'bridge=' in net0:
+                                vnet_to_delete = net0.split('bridge=')[1].split(',')[0]
+        
+        # Now, delete the VMs we found
+        for vm_summary in vms_to_delete:
+            vmid = vm_summary['vmid']
+            node_name = vm_summary['node'] # We now have the correct node name
+            vm = proxmox.nodes(node_name).qemu(vmid)
 
-        return {"message": "Successfully deleted lab and VNET '{}'.".format(vnet_name), "deleted_vms": deleted_vms}
+            if vm.status.current.get()['status'] == 'running':
+                vm.status.stop.post()
+                for _ in range(20):
+                    time.sleep(3)
+                    if vm.status.current.get()['status'] == 'stopped': break
+                else:
+                    raise Exception("Timed out waiting for VM {} to stop.".format(vmid))
+            
+            vm.delete()
+            deleted_vms.append(vm_summary.get('name'))
+            time.sleep(2)
+        
+        # After all VMs are deleted, delete the VNET if we found one
+        if vnet_to_delete:
+            proxmox.cluster.sdn.vnets(vnet_to_delete).delete()
+
+        return {"message": "Successfully deleted lab '{}' and VNET '{}'.".format(lab_group_name, vnet_to_delete), "deleted_vms": deleted_vms}
     except Exception as e:
         raise HTTPException(status_code=500, detail="An error occurred during lab deletion: {}".format(e))
