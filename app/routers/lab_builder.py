@@ -31,18 +31,14 @@ def _build_description_with_tags(existing_desc: str, lab_groups: List[str]) -> s
 
 @router.put("/templates/{vmid}/tag", tags=["Lab Builder"])
 def tag_template(vmid: int, request: TemplateTagRequest):
-    """Updates the lab group tags in a template's description."""
     proxmox = get_proxmox_connection()
     try:
         node_name = _find_vm_node_by_id(proxmox, vmid)
         if not node_name:
             raise HTTPException(status_code=404, detail="Template not found.")
-        
         current_config = proxmox.nodes(node_name).qemu(vmid).config.get()
         existing_desc = current_config.get('description', '')
-        
         new_description = _build_description_with_tags(existing_desc, request.lab_groups)
-        
         proxmox.nodes(node_name).qemu(vmid).config.put(description=new_description)
         return {"message": "Template tags updated successfully."}
     except Exception as e:
@@ -50,7 +46,6 @@ def tag_template(vmid: int, request: TemplateTagRequest):
 
 @router.post("/labs/instantiate", tags=["Lab Builder"])
 def instantiate_lab(request: LabInstantiateRequest):
-    """Creates a VNET and clones all templates from a specific lab group into it."""
     proxmox = get_proxmox_connection()
     try:
         # 1. Create the new VNET
@@ -63,8 +58,12 @@ def instantiate_lab(request: LabInstantiateRequest):
                 if num > highest_num:
                     highest_num = num
         new_vnet_name = "vnet{}".format(highest_num + 1)
-        proxmox.cluster.sdn.vnets.post(vnet=new_vnet_name, zone=request.vlan_zone, tag=request.vlan_tag)
         
+        try:
+            proxmox.cluster.sdn.vnets.post(vnet=new_vnet_name, zone=request.vlan_zone, tag=request.vlan_tag)
+        except Exception as vnet_error:
+            raise Exception("Failed to create SDN VNET. Proxmox Error: {}".format(vnet_error))
+            
         # 2. Calculate starting VMID
         all_vms = []
         nodes = proxmox.nodes.get()
@@ -74,8 +73,8 @@ def instantiate_lab(request: LabInstantiateRequest):
         vmid_prefix = (highest_num + 1) * 1000
         next_vmid = vmid_prefix
         
-        # 3. Clone, reconfigure, and start the VMs
         created_vms = []
+        # 3. Loop through nodes to find and process templates
         for node in nodes:
             node_name = node['node']
             for template_summary in proxmox.nodes(node_name).qemu.get():
@@ -84,28 +83,32 @@ def instantiate_lab(request: LabInstantiateRequest):
                     tags = _parse_tags_from_description(config.get('description', ''))
                     
                     if request.lab_group in tags:
-                        # This template is in our lab group, so clone it
                         while next_vmid in existing_ids:
                             next_vmid += 1
                         
                         template_id = template_summary['vmid']
                         new_clone_name = "{}-{}-{}".format(request.lab_group.lower(), template_summary.get('name', 'vm'), next_vmid)
                         
+                        # Step 1: Clone the VM without network settings
                         proxmox.nodes(node_name).qemu(template_id).clone.post(newid=next_vmid, name=new_clone_name, full=0)
                         
-                        time.sleep(2)
+                        time.sleep(2) # Wait for clone to be created
                         new_vm = proxmox.nodes(node_name).qemu(next_vmid)
-                        net0_config = new_vm.config.get().get('net0', '')
                         
+                        # Step 2: Reconfigure the network
+                        template_config = proxmox.nodes(node_name).qemu(template_id).config.get()
+                        net0_config = template_config.get('net0', '')
                         if net0_config:
                             model_and_mac = net0_config.split(',')[0]
-                            new_net0_config = "{},bridge={}".format(model_and_mac, new_vnet_name)
-                            new_vm.config.put(net0=new_net0_config)
-                        
+                            new_net_config_str = "{},bridge={}".format(model_and_mac, new_vnet_name)
+                            new_vm.config.put(net0=new_net_config_str)
+
                         created_vms.append({"name": new_clone_name, "id": next_vmid})
                         next_vmid += 1
 
         if not created_vms:
+            # Clean up the created VNET if no templates were found to clone
+            proxmox.cluster.sdn.vnets(new_vnet_name).delete()
             raise HTTPException(status_code=404, detail="No templates found in lab group '{}'.".format(request.lab_group))
 
         return {"message": "Lab '{}' instantiated successfully on VNET '{}'.".format(request.lab_group, new_vnet_name), "created_vms": created_vms}
