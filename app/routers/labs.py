@@ -146,3 +146,70 @@ def delete_lab(lab_group_name: str):
         return {"message": "Successfully deleted lab '{}' and VNET '{}'.".format(lab_group_name, vnet_to_delete), "deleted_vms": deleted_vms}
     except Exception as e:
         raise HTTPException(status_code=500, detail="An error occurred during lab deletion: {}".format(e))
+        
+@router.post("/labs/{lab_group_name}/start", tags=["Labs"])
+def start_lab(lab_group_name: str):
+    """
+    Starts all VMs that belong to a specific lab group instance.
+    """
+    proxmox = get_proxmox_connection()
+    started_vms = []
+    try:
+        nodes = proxmox.nodes.get()
+        for node in nodes:
+            node_name = node['node']
+            for vm_summary in proxmox.nodes(node_name).qemu.get():
+                vmid = vm_summary.get('vmid')
+                if not vmid: continue
+
+                config = proxmox.nodes(node_name).qemu(vmid).config.get()
+                desc = config.get('description', '')
+                match = re.search(r"Lab: (.*?) \| Instance: (\d+)", desc)
+
+                if match:
+                    lab_name = match.group(1)
+                    instance_num = match.group(2)
+                    current_group_name = "{}_cloned{}".format(lab_name, instance_num)
+
+                    # If this VM is part of the lab we want to start
+                    if current_group_name == lab_group_name:
+                        if vm_summary.get('status') == 'stopped':
+                            proxmox.nodes(node_name).qemu(vmid).status.start.post()
+                            started_vms.append(vm_summary.get('name'))
+        
+        return {"message": "Start command sent to all VMs in lab '{}'.".format(lab_group_name), "started_vms": started_vms}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="An error occurred while starting the lab: {}".format(e))
+        
+@router.post("/labs/{lab_group_name}/stop", tags=["Labs"])
+def stop_lab(lab_group_name: str):
+    """
+    Stops all VMs that belong to a specific lab group instance.
+    """
+    proxmox = get_proxmox_connection()
+    stopped_vms = []
+    try:
+        nodes = proxmox.nodes.get()
+        for node in nodes:
+            node_name = node['node']
+            for vm_summary in proxmox.nodes(node_name).qemu.get():
+                vmid = vm_summary.get('vmid')
+                if not vmid: continue
+
+                config = proxmox.nodes(node_name).qemu(vmid).config.get()
+                desc = config.get('description', '')
+                match = re.search(r"Lab: (.*?) \| Instance: (\d+)", desc)
+
+                if match:
+                    lab_name = match.group(1)
+                    instance_num = match.group(2)
+                    current_group_name = "{}_cloned{}".format(lab_name, instance_num)
+
+                    if current_group_name == lab_group_name:
+                        if vm_summary.get('status') == 'running':
+                            proxmox.nodes(node_name).qemu(vmid).status.stop.post()
+                            stopped_vms.append(vm_summary.get('name'))
+        
+        return {"message": "Stop command sent to all VMs in lab '{}'.".format(lab_group_name), "stopped_vms": stopped_vms}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="An error occurred while stopping the lab: {}".format(e))

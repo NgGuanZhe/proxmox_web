@@ -9,7 +9,6 @@ const error = ref(null);
 const selectedVm = ref(null);
 const actionStatus = ref(null);
 
-// --- NEW GROUPING LOGIC ---
 const labPlaygroundGroups = computed(() => {
   const groups = {};
   for (const vm of vms.value) {
@@ -22,9 +21,12 @@ const labPlaygroundGroups = computed(() => {
       const groupName = `${labName}_cloned${instanceNum}`;
       
       if (!groups[groupName]) {
-        groups[groupName] = [];
+        groups[groupName] = { vms: [], state: 'stopped' };
       }
-      groups[groupName].push(vm);
+      groups[groupName].vms.push(vm);
+      if (vm.status === 'running') {
+        groups[groupName].state = 'running';
+      }
     }
   }
   return groups;
@@ -72,6 +74,47 @@ async function deleteLab(vnetName) {
   }
 }
 
+
+async function startLab(groupName) {
+  isLoading.value = true;
+  error.value = null;
+  actionStatus.value = null;
+  try {
+    const response = await fetch(`/api/labs/${groupName}/start`, { method: 'POST' });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.detail || 'Failed to start lab.');
+    actionStatus.value = result.message;
+    setTimeout(() => { fetchVMs() }, 3000);
+  } catch(e) {
+    error.value = e.message;
+    isLoading.value = false;
+  }
+}
+
+async function stopLab(groupName) {
+  isLoading.value = true;
+  error.value = null;
+  actionStatus.value = null;
+  try {
+    const response = await fetch(`/api/labs/${groupName}/stop`, { method: 'POST' });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.detail || 'Failed to stop lab.');
+    actionStatus.value = result.message;
+    setTimeout(() => { fetchVMs() }, 3000);
+  } catch(e) {
+    error.value = e.message;
+    isLoading.value = false;
+  }
+}
+
+function toggleLabPower(groupName, currentState) {
+  if (currentState === 'running') {
+    stopLab(groupName);
+  } else {
+    startLab(groupName);
+  }
+}
+
 function handleViewVm(vmToShow) {
   selectedVm.value = vmToShow;
 }
@@ -80,7 +123,7 @@ function handleViewVm(vmToShow) {
 <template>
   <header>
     <h1>Lab Playground</h1>
-    <p>View all active lab environments grouped by their network.</p>
+    <p>View and manage active lab environments.</p>
      <button @click="fetchVMs" :disabled="isLoading">
       {{ isLoading ? 'Loading...' : 'Refresh Environments' }}
     </button>
@@ -95,13 +138,20 @@ function handleViewVm(vmToShow) {
     </div>
 
     <div v-else class="dashboard-layout">
-      <div v-for="(vmList, groupName) in labPlaygroundGroups" :key="groupName" class="vm-group-column">
+      <div v-for="(group, groupName) in labPlaygroundGroups" :key="groupName" class="vm-group-column">
         <div class="group-header">
           <h2 class="group-title">{{ groupName }}</h2>
-          <button class="delete-button" @click="deleteLab(groupName)">Delete Lab</button>
+          <div class="button-group">
+            <button 
+              :class="group.state === 'running' ? 'stop-button' : 'start-button'"
+              @click="toggleLabPower(groupName, group.state)">
+              {{ group.state === 'running' ? 'Stop Lab' : 'Start Lab' }}
+            </button>
+            <button class="delete-button" @click="deleteLab(groupName)">Delete Lab</button>
+          </div>
         </div>
         <div class="vm-grid">
-          <VmCard v-for="vm in vmList" :key="vm.proxmox_id" :vm="vm" @view="handleViewVm" />
+          <VmCard v-for="vm in group.vms" :key="vm.proxmox_id" :vm="vm" @view="handleViewVm" />
         </div>
       </div>
     </div>
@@ -117,10 +167,59 @@ button { font-weight: 700; border: none; padding: 12px 24px; font-size: 16px; bo
 .status-box.error { background-color: #ffebee; color: #c62828; }
 .status-box.success { background-color: #e8f5e9; color: #2e7d32; }
 .placeholder { text-align: center; color: var(--text-muted); padding: 2rem; background-color: var(--bg-light); border-radius: 8px; }
-.dashboard-layout { display: flex; flex-direction: row; gap: 2rem; overflow-x: auto; padding-bottom: 1rem; }
-.vm-group-column { background-color: var(--bg-light); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 8px; min-width: 340px; flex-shrink: 0; }
-.group-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
-.group-title { color: var(--accent-color); margin: 0; }
-.delete-button { background-color: var(--status-stopped); color: white; font-size: 12px; padding: 5px 10px; }
-.vm-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+
+/* --- CORRECTED LAYOUT STYLES --- */
+.dashboard-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+.vm-group-column {
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  padding: 1.5rem;
+  border-radius: 8px;
+  min-width: 340px;
+  flex-shrink: 0;
+}
+.group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+.group-title {
+  color: var(--accent-color);
+  margin: 0;
+  font-size: 1.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.vm-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+.button-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+.start-button, .stop-button, .delete-button {
+  font-size: 12px;
+  padding: 5px 10px;
+}
+.start-button {
+  background-color: var(--status-running);
+  color: white;
+}
+.stop-button, .delete-button {
+  background-color: var(--status-stopped);
+  color: white;
+}
 </style>
