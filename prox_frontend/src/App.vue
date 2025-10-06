@@ -40,9 +40,15 @@ import { RouterLink, RouterView } from 'vue-router'
           </RouterLink>
         </li>
         <li>
-          <RouterLink to="/createlab">
-            <span class="icon">🔬</span>
-            <span class="text">Create VLAN Lab</span>
+          <RouterLink to="/labbuilder">
+            <span class="icon">🛠️</span>
+            <span class="text">Lab Builder</span>
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/playground">
+            <span class="icon">🎮</span>
+            <span class="text">Lab Playground</span>
           </RouterLink>
         </li>
       </ul>

@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import vms, networks, sdn, labs
+from app.routers import vms, networks, sdn, lab_builder, labs
 
 app = FastAPI(
     title="Proxmox Cyber Range API",
@@ -16,4 +16,6 @@ def read_root():
 app.include_router(vms.router)
 app.include_router(networks.router)
 app.include_router(sdn.router)
+app.include_router(lab_builder.router)
 app.include_router(labs.router)
+
