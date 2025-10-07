@@ -1,9 +1,10 @@
 import re
 import sys
 import time
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends # <-- Add Depends
 from pydantic import BaseModel
 from app.core.proxmox import get_proxmox_connection
+from app.routers.auth import get_current_active_user # <-- Import the security function
 
 router = APIRouter()
 
@@ -51,7 +52,7 @@ def _format_vm_details(vm_config):
     return details
 
 @router.get("/vms", tags=["Virtual Machines"])
-def list_vms():
+def list_vms(current_user: dict = Depends(get_current_active_user)): # <-- Security added here
     proxmox = get_proxmox_connection(); all_vms_list = []
     try:
         for node in proxmox.nodes.get():
@@ -65,7 +66,7 @@ def list_vms():
     return all_vms_list
 
 @router.put("/vms/{vmid}/rename", tags=["Virtual Machines"])
-def rename_vm(vmid: int, request: VmRenameRequest):
+def rename_vm(vmid: int, request: VmRenameRequest, current_user: dict = Depends(get_current_active_user)):
     proxmox = get_proxmox_connection()
     try:
         node_name = _find_vm_node_by_id(proxmox, vmid)
@@ -77,7 +78,7 @@ def rename_vm(vmid: int, request: VmRenameRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.delete("/vms/{vmid}", tags=["Virtual Machines"])
-def delete_vm(vmid: int):
+def delete_vm(vmid: int, current_user: dict = Depends(get_current_active_user)):
     proxmox = get_proxmox_connection()
     try:
         node_name = _find_vm_node_by_id(proxmox, vmid)
@@ -97,7 +98,7 @@ def delete_vm(vmid: int):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/vms/start_all", tags=["Virtual Machines"])
-def start_all_vms():
+def start_all_vms(current_user: dict = Depends(get_current_active_user)):
     proxmox = get_proxmox_connection()
     started_vms = []
     try:
@@ -112,7 +113,7 @@ def start_all_vms():
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/vms/stop_all", tags=["Virtual Machines"])
-def stop_all_vms():
+def stop_all_vms(current_user: dict = Depends(get_current_active_user)):
     proxmox = get_proxmox_connection()
     stopped_vms = []
     try:
@@ -127,7 +128,7 @@ def stop_all_vms():
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/clone_templates", tags=["Virtual Machines"])
-def clone_all_templates():
+def clone_all_templates(current_user: dict = Depends(get_current_active_user)):
     proxmox = get_proxmox_connection()
     try:
         all_vms_and_templates = [];
@@ -151,7 +152,7 @@ def clone_all_templates():
         raise HTTPException(status_code=500, detail="An error occurred during cloning: {}".format(e))
 
 @router.post("/vms/delete_clones", tags=["Virtual Machines"])
-def delete_all_clones():
+def delete_all_clones(current_user: dict = Depends(get_current_active_user)):
     proxmox = get_proxmox_connection()
     deleted_vms = []
     errors = []
@@ -181,7 +182,7 @@ def delete_all_clones():
         raise HTTPException(status_code=500, detail="An error occurred during cleanup: {}".format(e))
 
 @router.get("/vms/{vmid}/snapshots", tags=["Snapshots"])
-def list_snapshots(vmid: int):
+def list_snapshots(vmid: int, current_user: dict = Depends(get_current_active_user)):
     """Gets a list of all snapshots for a specific VM."""
     proxmox = get_proxmox_connection()
     try:
@@ -195,7 +196,7 @@ def list_snapshots(vmid: int):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/vms/{vmid}/snapshots", tags=["Snapshots"])
-def create_snapshot(vmid: int, request: SnapshotRequest):
+def create_snapshot(vmid: int, request: SnapshotRequest, current_user: dict = Depends(get_current_active_user)):
     """Creates a new snapshot for a VM."""
     proxmox = get_proxmox_connection()
     try:
@@ -210,7 +211,7 @@ def create_snapshot(vmid: int, request: SnapshotRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/vms/{vmid}/snapshots/{snapname}/rollback", tags=["Snapshots"])
-def rollback_snapshot(vmid: int, snapname: str):
+def rollback_snapshot(vmid: int, snapname: str, current_user: dict = Depends(get_current_active_user)):
     """Restores a VM to a previous snapshot."""
     proxmox = get_proxmox_connection()
     try:
@@ -225,7 +226,7 @@ def rollback_snapshot(vmid: int, snapname: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.put("/vms/{vmid}/reconfigure_network", tags=["Virtual Machines"])
-def reconfigure_network(vmid: int, request: VmNetworkRequest):
+def reconfigure_network(vmid: int, request: VmNetworkRequest, current_user: dict = Depends(get_current_active_user)):
     proxmox = get_proxmox_connection()
     try:
         node_name = _find_vm_node_by_id(proxmox, vmid)
@@ -252,7 +253,7 @@ def reconfigure_network(vmid: int, request: VmNetworkRequest):
 
 # The full, correct create_lab function
 @router.post("/labs/create", tags=["Labs"])
-def create_lab(request: LabCreateRequest):
+def create_lab(request: LabCreateRequest, current_user: dict = Depends(get_current_active_user)):
     proxmox = get_proxmox_connection()
     try:
         lab_name_clean = re.sub(r'[^a-zA-Z0-9]', '', request.lab_name).lower()

@@ -1,23 +1,19 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { api } from '@/services/apiService'; // <-- Import the new service
 
 const zones = ref([])
 const vnets = ref([])
 const isLoading = ref(true)
 const error = ref(null)
-
-// State for creating zones
 const newZoneName = ref('')
 const newZoneType = ref('simple')
 const newVlanBridge = ref('')
 const newVxlanPeers = ref('')
-
-// State for creating vnets
 const newVnetName = ref('')
 const newVnetZone = ref('')
 const newVnetVlanTag = ref('')
 
-// Determines if the selected zone for a new VNET is a 'vlan' type
 const selectedZoneType = computed(() => {
   const zone = zones.value.find(z => z.zone === newVnetZone.value)
   return zone ? zone.type : ''
@@ -30,14 +26,12 @@ onMounted(async () => {
 async function fetchInitialData() {
   isLoading.value = true; error.value = null;
   try {
-    const [zoneResponse, vnetResponse] = await Promise.all([
-      fetch('/api/sdn/zones'),
-      fetch('/api/sdn/vnets')
+    const [zoneData, vnetData] = await Promise.all([
+      api.get('/sdn/zones'),
+      api.get('/sdn/vnets')
     ]);
-    if (!zoneResponse.ok) throw new Error('Failed to fetch SDN Zones');
-    if (!vnetResponse.ok) throw new Error('Failed to fetch SDN VNETs');
-    zones.value = await zoneResponse.json();
-    vnets.value = await vnetResponse.json();
+    zones.value = zoneData;
+    vnets.value = vnetData;
   } catch (e) {
     error.value = e.message;
   } finally {
@@ -55,11 +49,7 @@ async function createSdnZone() {
     bridge: newVlanBridge.value, peers: newVxlanPeers.value
   };
   try {
-    const response = await fetch('/api/sdn/zones', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.detail || 'Failed to create SDN Zone.');
+    await api.post('/sdn/zones', payload);
     alert(`Successfully created zone: ${newZoneName.value}`);
     newZoneName.value = ''; newVlanBridge.value = ''; newVxlanPeers.value = '';
     await fetchInitialData();
@@ -71,11 +61,7 @@ async function createSdnZone() {
 async function deleteSdnZone(zoneName) {
   if (!confirm(`Are you sure you want to delete the SDN Zone "${zoneName}"?`)) return;
   try {
-    const response = await fetch(`/api/sdn/zones/${zoneName}`, { method: 'DELETE' });
-    if (!response.ok) {
-      const result = await response.json();
-      throw new Error(result.detail || 'Failed to delete zone.');
-    }
+    await api.delete(`/sdn/zones/${zoneName}`);
     alert(`Successfully deleted zone: ${zoneName}`);
     await fetchInitialData();
   } catch(e) {
@@ -94,13 +80,7 @@ async function createSdnVnet() {
     tag: selectedZoneType.value === 'vlan' ? newVnetVlanTag.value : undefined
   };
   try {
-    const response = await fetch('/api/sdn/vnets', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.detail || 'Failed to create SDN VNET.');
+    await api.post('/sdn/vnets', payload);
     alert(`Successfully created VNET: ${newVnetName.value}`);
     newVnetName.value = '';
     newVnetVlanTag.value = '';
@@ -110,19 +90,14 @@ async function createSdnVnet() {
   }
 }
 
-// --- THIS IS THE NEW FUNCTION ---
 async function deleteSdnVnet(vnetName) {
   if (!confirm(`Are you sure you want to delete the SDN VNET "${vnetName}"?`)) {
     return;
   }
   try {
-    const response = await fetch(`/api/sdn/vnets/${vnetName}`, { method: 'DELETE' });
-    if (!response.ok) {
-      const result = await response.json();
-      throw new Error(result.detail || 'Failed to delete VNET.');
-    }
+    await api.delete(`/sdn/vnets/${vnetName}`);
     alert(`Successfully deleted VNET: ${vnetName}`);
-    await fetchInitialData(); // Auto-refresh the list
+    await fetchInitialData();
   } catch(e) {
     error.value = e.message;
   }

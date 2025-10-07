@@ -1,9 +1,10 @@
 import re
 import time
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from app.core.proxmox import get_proxmox_connection
 from .vms import _find_vm_node_by_id
+from app.routers.auth import get_current_active_user
 
 router = APIRouter()
 
@@ -12,7 +13,7 @@ class VlanLabRequest(BaseModel):
     tag: int
 
 @router.post("/labs/create_vlan_lab", tags=["Labs"])
-def create_vlan_lab(request: VlanLabRequest):
+def create_vlan_lab(request: VlanLabRequest, current_user: dict = Depends(get_current_active_user)):
     proxmox = get_proxmox_connection()
     try:
         # ... (VNET and VMID naming logic is unchanged)
@@ -82,7 +83,7 @@ def create_vlan_lab(request: VlanLabRequest):
         raise HTTPException(status_code=500, detail="An error occurred: {}".format(e))
 
 @router.delete("/labs/{lab_group_name}", tags=["Labs"])
-def delete_lab(lab_group_name: str):
+def delete_lab(lab_group_name: str, current_user: dict = Depends(get_current_active_user)):
     """
     Deletes all VMs in a lab group, and then deletes the VNET they are connected to.
     """
@@ -148,7 +149,7 @@ def delete_lab(lab_group_name: str):
         raise HTTPException(status_code=500, detail="An error occurred during lab deletion: {}".format(e))
         
 @router.post("/labs/{lab_group_name}/start", tags=["Labs"])
-def start_lab(lab_group_name: str):
+def start_lab(lab_group_name: str, current_user: dict = Depends(get_current_active_user)):
     """
     Starts all VMs that belong to a specific lab group instance.
     """
@@ -182,7 +183,7 @@ def start_lab(lab_group_name: str):
         raise HTTPException(status_code=500, detail="An error occurred while starting the lab: {}".format(e))
         
 @router.post("/labs/{lab_group_name}/stop", tags=["Labs"])
-def stop_lab(lab_group_name: str):
+def stop_lab(lab_group_name: str, current_user: dict = Depends(get_current_active_user)):
     """
     Stops all VMs that belong to a specific lab group instance.
     """

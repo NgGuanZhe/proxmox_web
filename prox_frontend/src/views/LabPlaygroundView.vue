@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { api } from '@/services/apiService'; // <-- Import the new service
 import VmCard from '../components/VmCard.vue';
 import VmDetailModal from '../components/VmDetailModal.vue';
 
@@ -39,11 +40,10 @@ onMounted(async () => {
 async function fetchVMs() {
   isLoading.value = true;
   error.value = null;
+  actionStatus.value = null; // Clear status on refresh
   vms.value = [];
   try {
-    const response = await fetch('/api/vms');
-    if (!response.ok) throw new Error(`Server responded with status: ${response.status}`);
-    vms.value = await response.json();
+    vms.value = await api.get('/vms');
   } catch (e) {
     error.value = e.message;
   } finally {
@@ -51,38 +51,37 @@ async function fetchVMs() {
   }
 }
 
-async function deleteLab(vnetName) {
-  if (!confirm(`Are you sure you want to delete the entire lab on network "${vnetName}"? All VMs in this lab will be permanently destroyed.`)) {
-    return;
+async function deleteLab(groupName) {
+  const group = labPlaygroundGroups.value[groupName];
+  const firstVmInGroup = group?.vms[0];
+  const vnetName = firstVmInGroup?.hardware_details?.network_interfaces[0]?.bridge;
+
+  if (!vnetName) {
+      alert('Could not determine VNET for this lab group to delete.');
+      return;
   }
+  
+  if (!confirm(`Are you sure you want to delete the entire lab "${groupName}"?`)) return;
+
   isLoading.value = true;
   error.value = null;
   actionStatus.value = null;
   try {
-    const response = await fetch(`/api/labs/${vnetName}`, { method: 'DELETE' });
-    const result = await response.json();
-    if (!response.ok) {
-      throw new Error(result.detail || 'Failed to delete lab.');
-    }
+    const result = await api.delete(`/labs/${vnetName}`);
     actionStatus.value = result.message;
-    setTimeout(() => {
-      fetchVMs();
-    }, 5000); // Wait 5 seconds for all delete tasks to finish
+    setTimeout(() => { fetchVMs() }, 5000);
   } catch(e) {
     error.value = e.message;
     isLoading.value = false;
   }
 }
 
-
 async function startLab(groupName) {
   isLoading.value = true;
   error.value = null;
   actionStatus.value = null;
   try {
-    const response = await fetch(`/api/labs/${groupName}/start`, { method: 'POST' });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.detail || 'Failed to start lab.');
+    const result = await api.post(`/labs/${groupName}/start`, {});
     actionStatus.value = result.message;
     setTimeout(() => { fetchVMs() }, 3000);
   } catch(e) {
@@ -96,9 +95,7 @@ async function stopLab(groupName) {
   error.value = null;
   actionStatus.value = null;
   try {
-    const response = await fetch(`/api/labs/${groupName}/stop`, { method: 'POST' });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.detail || 'Failed to stop lab.');
+    const result = await api.post(`/labs/${groupName}/stop`, {});
     actionStatus.value = result.message;
     setTimeout(() => { fetchVMs() }, 3000);
   } catch(e) {

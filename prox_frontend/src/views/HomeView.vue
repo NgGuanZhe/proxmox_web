@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { api } from '@/services/apiService'; // <-- Import the new service
 import VmCard from '../components/VmCard.vue'
 import VmDetailModal from '../components/VmDetailModal.vue'
 
@@ -52,9 +53,7 @@ const groupedVms = computed(() => {
 async function fetchVMs() {
   isLoading.value = true; error.value = null; vms.value = []; bulkActionStatus.value = null;
   try {
-    const response = await fetch('/api/vms');
-    if (!response.ok) throw new Error(`Server responded with status: ${response.status}`);
-    vms.value = await response.json()
+    vms.value = await api.get('/vms');
   } catch (e) {
     error.value = e.message
   } finally {
@@ -71,13 +70,7 @@ async function createLab() {
   error.value = null;
   labCreationStatus.value = null;
   try {
-    const response = await fetch('/api/labs/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lab_name: newLabName.value.trim() })
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.detail || 'Lab creation failed.');
+    const result = await api.post('/labs/create', { lab_name: newLabName.value.trim() });
     labCreationStatus.value = result;
     newLabName.value = '';
     await fetchVMs();
@@ -95,11 +88,7 @@ async function handleDeleteVm(vmToDelete) {
   isLoading.value = true;
   error.value = null;
   try {
-    const response = await fetch(`/api/vms/${vmToDelete.proxmox_id}`, { method: 'DELETE' });
-    const result = await response.json();
-    if (!response.ok) {
-      throw new Error(result.detail || 'Delete action failed.');
-    }
+    await api.delete(`/vms/${vmToDelete.proxmox_id}`);
     setTimeout(() => {
       fetchVMs();
     }, 2000);
@@ -117,15 +106,7 @@ async function handleRenameVm(vmToRename) {
   isLoading.value = true;
   error.value = null;
   try {
-    const response = await fetch(`/api/vms/${vmToRename.proxmox_id}/rename`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ new_name: newName.trim() })
-    });
-    const result = await response.json();
-    if (!response.ok) {
-      throw new Error(result.detail || 'Rename action failed.');
-    }
+    await api.put(`/vms/${vmToRename.proxmox_id}/rename`, { new_name: newName.trim() });
     await fetchVMs();
   } catch(e) {
     error.value = e.message;
@@ -141,11 +122,9 @@ async function handleBulkAction(action) {
   isBulkActionLoading.value = true;
   error.value = null;
   bulkActionStatus.value = null;
-  const endpoint = action === 'start' ? '/api/vms/start_all' : '/api/vms/stop_all';
+  const endpoint = action === 'start' ? '/vms/start_all' : '/vms/stop_all';
   try {
-    const response = await fetch(endpoint, { method: 'POST' });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.detail || 'Bulk action failed.');
+    const result = await api.post(endpoint, {}); // Send empty body for POST
     bulkActionStatus.value = result.message;
     setTimeout(() => { fetchVMs() }, 3000);
   } catch (e) {

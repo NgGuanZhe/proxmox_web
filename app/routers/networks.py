@@ -1,7 +1,8 @@
 import time
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from app.core.proxmox import get_proxmox_connection
+from app.routers.auth import get_current_active_user
 
 router = APIRouter()
 
@@ -11,7 +12,7 @@ class NetworkCreateRequest(BaseModel):
     comments: str = None
 
 @router.get("/networks", tags=["Networks"])
-def list_networks():
+def list_networks(current_user: dict = Depends(get_current_active_user)):
     proxmox = get_proxmox_connection()
     all_networks = {}
     try:
@@ -26,7 +27,7 @@ def list_networks():
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/networks", tags=["Networks"])
-def create_network(request: NetworkCreateRequest):
+def create_network(request: NetworkCreateRequest, current_user: dict = Depends(get_current_active_user)):
     proxmox = get_proxmox_connection()
     try:
         proxmox.nodes(request.node).network.post(
@@ -45,7 +46,7 @@ def create_network(request: NetworkCreateRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.delete("/networks/{node}/{iface}", tags=["Networks"])
-def delete_network(node: str, iface: str):
+def delete_network(node: str, iface: str, current_user: dict = Depends(get_current_active_user)):
     proxmox = get_proxmox_connection()
     try:
         proxmox.nodes(node).network(iface).delete()

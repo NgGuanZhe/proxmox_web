@@ -1,10 +1,11 @@
 import re
 import time
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import List
 from app.core.proxmox import get_proxmox_connection
 from .vms import _find_vm_node_by_id
+from app.routers.auth import get_current_active_user
 
 router = APIRouter()
 
@@ -36,7 +37,7 @@ def _build_description_with_tags(existing_desc: str, lab_groups: List[str]) -> s
     return new_desc
 
 @router.put("/templates/{vmid}/tag", tags=["Lab Builder"])
-def tag_template(vmid: int, request: TemplateTagRequest):
+def tag_template(vmid: int, request: TemplateTagRequest, current_user: dict = Depends(get_current_active_user)):
     proxmox = get_proxmox_connection()
     try:
         node_name = _find_vm_node_by_id(proxmox, vmid)
@@ -51,7 +52,7 @@ def tag_template(vmid: int, request: TemplateTagRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/labs/instantiate", tags=["Lab Builder"])
-def instantiate_lab(request: LabInstantiateRequest):
+def instantiate_lab(request: LabInstantiateRequest, current_user: dict = Depends(get_current_active_user)):
     proxmox = get_proxmox_connection()
     try:
         nodes = proxmox.nodes.get()

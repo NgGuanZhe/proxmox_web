@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { api } from '@/services/apiService'; // <-- Import the new service
 
 const networks = ref({})
 const isLoading = ref(true)
@@ -15,9 +16,7 @@ async function fetchNetworks() {
   isLoading.value = true
   error.value = null
   try {
-    const response = await fetch('/api/networks')
-    if (!response.ok) throw new Error(`Server responded with status: ${response.status}`)
-    networks.value = await response.json()
+    networks.value = await api.get('/networks');
     if (Object.keys(networks.value).length > 0) {
       selectedNode.value = Object.keys(networks.value)[0];
     }
@@ -34,13 +33,8 @@ async function createNetwork() {
     return
   }
   try {
-    const response = await fetch('/api/networks', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ node: selectedNode.value, iface: newBridgeName.value })
-    })
-    const result = await response.json()
-    if (!response.ok) throw new Error(result.detail || 'Failed to create network.')
+    const payload = { node: selectedNode.value, iface: newBridgeName.value };
+    await api.post('/networks', payload);
     
     alert(`Successfully created bridge: ${newBridgeName.value}`)
     newBridgeName.value = ''
@@ -50,17 +44,14 @@ async function createNetwork() {
   }
 }
 
-// --- THIS IS THE NEW FUNCTION ---
 async function deleteNetwork(node, iface) {
-  if (!confirm(`Are you sure you want to delete the network bridge "${iface}" on node "${node}"? This cannot be undone.`)) {
+  if (!confirm(`Are you sure you want to delete the network bridge "${iface}" on node "${node}"?`)) {
     return;
   }
   try {
-    const response = await fetch(`/api/networks/${node}/${iface}`, { method: 'DELETE' });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.detail || 'Failed to delete network.');
+    await api.delete(`/networks/${node}/${iface}`);
     alert(`Successfully deleted bridge: ${iface}`);
-    await fetchNetworks(); // Auto-refresh the list
+    await fetchNetworks();
   } catch (e) {
     error.value = e.message;
   }

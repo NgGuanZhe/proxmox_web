@@ -1,19 +1,17 @@
 <script setup>
 import { ref } from 'vue'
+import { api } from '@/services/apiService'; // <-- Import the new service
 
 const cloneStatus = ref(null)
 const isCloning = ref(false)
 const error = ref(null)
-const deleteStatus = ref(null) // New variable for deleting status
-const isDeleting = ref(false)   // New variable for deleting loading state
+const deleteStatus = ref(null)
+const isDeleting = ref(false)
 
 async function cloneAllTemplates() {
   isCloning.value = true; error.value = null; cloneStatus.value = null; deleteStatus.value = null;
   try {
-    const response = await fetch('/api/clone_templates', { method: 'POST' })
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.detail || 'Cloning failed.')
-    cloneStatus.value = result
+    cloneStatus.value = await api.post('/clone_templates', {});
   } catch (e) {
     error.value = e.message
   } finally {
@@ -21,19 +19,14 @@ async function cloneAllTemplates() {
   }
 }
 
-// --- THIS IS THE NEW FUNCTION ---
 async function deleteAllClones() {
-  // Add a confirmation dialog as a safety measure
   if (!confirm("Are you sure you want to permanently delete ALL cloned VMs? This cannot be undone.")) {
     return;
   }
 
   isDeleting.value = true; error.value = null; cloneStatus.value = null; deleteStatus.value = null;
   try {
-    const response = await fetch('/api/vms/delete_clones', { method: 'POST' })
-    const result = await response.json()
-    if (!response.ok) throw new Error(result.detail || 'Delete action failed.')
-    deleteStatus.value = result
+    deleteStatus.value = await api.post('/vms/delete_clones', {});
   } catch (e) {
     error.value = e.message
   } finally {

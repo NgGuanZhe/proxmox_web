@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { api } from '@/services/apiService'; // <-- Import the new service
 
 const vms = ref([])
 const snapshots = ref({})
@@ -7,7 +8,6 @@ const newSnapshotNames = ref({})
 const isLoading = ref(true)
 const error = ref(null)
 
-// Fetch the list of VMs when the page loads
 onMounted(async () => {
   await fetchVMs()
 })
@@ -16,10 +16,7 @@ async function fetchVMs() {
   isLoading.value = true
   error.value = null
   try {
-    const response = await fetch('/api/vms')
-    if (!response.ok) throw new Error(`Server responded with status: ${response.status}`)
-    const allVms = await response.json()
-    // Filter out templates, as you can't snapshot them
+    const allVms = await api.get('/vms');
     vms.value = allVms.filter(vm => !vm.hardware_details || vm.hardware_details.template !== 1)
   } catch (e) {
     error.value = e.message
@@ -30,9 +27,7 @@ async function fetchVMs() {
 
 async function fetchSnapshots(vmid) {
   try {
-    const response = await fetch(`/api/vms/${vmid}/snapshots`)
-    if (!response.ok) throw new Error('Failed to fetch snapshots.')
-    snapshots.value[vmid] = await response.json()
+    snapshots.value[vmid] = await api.get(`/vms/${vmid}/snapshots`);
   } catch (e) {
     error.value = e.message
   }
@@ -46,34 +41,24 @@ async function createSnapshot(vmid) {
   }
   
   try {
-    const response = await fetch(`/api/vms/${vmid}/snapshots`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: snapName.trim() })
-    })
-    const result = await response.json()
-    if (!response.ok) throw new Error(result.detail || 'Failed to create snapshot.')
-    
-    alert(`Successfully created snapshot: ${snapName}`)
-    newSnapshotNames.value[vmid] = '' // Clear the input
-    await fetchSnapshots(vmid) // Refresh the list
+    await api.post(`/vms/${vmid}/snapshots`, { name: snapName.trim() });
+    alert(`Successfully created snapshot: ${snapName}`);
+    newSnapshotNames.value[vmid] = '';
+    await fetchSnapshots(vmid);
   } catch (e) {
     error.value = e.message
   }
 }
 
 async function rollbackSnapshot(vmid, snapname) {
-  if (!confirm(`Are you sure you want to roll back this VM to the snapshot "${snapname}"? All current changes will be lost.`)) {
+  if (!confirm(`Are you sure you want to roll back this VM to the snapshot "${snapname}"?`)) {
     return
   }
 
   try {
-    const response = await fetch(`/api/vms/${vmid}/snapshots/${snapname}/rollback`, { method: 'POST' })
-    const result = await response.json()
-    if (!response.ok) throw new Error(result.detail || 'Failed to roll back snapshot.')
-    
-    alert(`Successfully rolled back to snapshot: ${snapname}`)
-    await fetchVMs() // Refresh the main VM list to show status changes
+    await api.post(`/vms/${vmid}/snapshots/${snapname}/rollback`, {});
+    alert(`Successfully rolled back to snapshot: ${snapname}`);
+    await fetchVMs();
   } catch (e) {
     error.value = e.message
   }

@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from app.core.proxmox import get_proxmox_connection
 from typing import Optional
+from app.routers.auth import get_current_active_user
+
 router = APIRouter()
 
 class SdnZoneRequest(BaseModel):
@@ -16,7 +18,7 @@ class SdnVnetRequest(BaseModel):
     tag: Optional[int] = None
 
 @router.get("/sdn/zones", tags=["SDN"])
-def list_sdn_zones():
+def list_sdn_zones(current_user: dict = Depends(get_current_active_user)):
     """Gets a list of all SDN zones."""
     proxmox = get_proxmox_connection()
     try:
@@ -26,7 +28,7 @@ def list_sdn_zones():
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/sdn/zones", tags=["SDN"])
-def create_sdn_zone(request: SdnZoneRequest):
+def create_sdn_zone(request: SdnZoneRequest, current_user: dict = Depends(get_current_active_user)):
     """Creates a new SDN Zone."""
     proxmox = get_proxmox_connection()
     # Prepare the parameters to send to Proxmox
@@ -47,7 +49,7 @@ def create_sdn_zone(request: SdnZoneRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.delete("/sdn/zones/{zone}", tags=["SDN"])
-def delete_sdn_zone(zone: str):
+def delete_sdn_zone(zone: str, current_user: dict = Depends(get_current_active_user)):
     """Deletes an SDN Zone."""
     proxmox = get_proxmox_connection()
     try:
@@ -61,7 +63,7 @@ def delete_sdn_zone(zone: str):
         raise HTTPException(status_code=500, detail=str(e))
         
 @router.get("/sdn/vnets", tags=["SDN"])
-def list_sdn_vnets():
+def list_sdn_vnets(current_user: dict = Depends(get_current_active_user)):
     """Gets a list of all SDN VNETs."""
     proxmox = get_proxmox_connection()
     try:
@@ -70,7 +72,7 @@ def list_sdn_vnets():
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/sdn/vnets", tags=["SDN"])
-def create_sdn_vnet(request: SdnVnetRequest):
+def create_sdn_vnet(request: SdnVnetRequest, current_user: dict = Depends(get_current_active_user)):
     """Creates a new SDN VNET in a specific zone."""
     proxmox = get_proxmox_connection()
     params = {
@@ -88,7 +90,7 @@ def create_sdn_vnet(request: SdnVnetRequest):
         raise HTTPException(status_code=500, detail=str(e))
         
 @router.delete("/sdn/vnets/{vnet}", tags=["SDN"])
-def delete_sdn_vnet(vnet: str):
+def delete_sdn_vnet(vnet: str, current_user: dict = Depends(get_current_active_user)):
     """Deletes an SDN VNET."""
     proxmox = get_proxmox_connection()
     try:
