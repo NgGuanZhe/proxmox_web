@@ -51,18 +51,22 @@ async function handleLogin() {
         <div v-if="error" class="error-box">
           <p>{{ error }}</p>
         </div>
+        <p class="switch-form">Don't have an account? <RouterLink to="/register">Register here</RouterLink></p>
       </form>
     </div>
   </div>
 </template>
 
 <style scoped>
-.login-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-.login-box { background-color: var(--bg-light); padding: 2.5rem; border-radius: 8px; border: 1px solid var(--border-color); width: 100%; max-width: 400px; }
-h2 { text-align: center; margin-top: 0; color: var(--accent-color); }
+.login-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; background-color: var(--bg-dark); }
+.login-box { background-color: var(--bg-light); padding: 2.5rem; border-radius: 8px; border: 1px solid var(--border-color); width: 100%; max-width: 400px; color: var(--text-color); }
+h2 { text-align: center; margin-top: 0; color: var(--accent-color); font-family: 'Roboto Mono', monospace; }
 .input-group { margin-bottom: 1.5rem; }
 label { display: block; margin-bottom: 0.5rem; color: var(--text-muted); }
-input { width: 100%; background-color: var(--bg-dark); color: var(--text-color); border: 1px solid var(--border-color); padding: 12px; border-radius: 5px; font-size: 16px; box-sizing: border-box; }
+input { width: 100%; box-sizing: border-box; background-color: var(--bg-dark); color: var(--text-color); border: 1px solid var(--border-color); padding: 12px; border-radius: 5px; font-size: 16px; }
 button { width: 100%; background-color: var(--accent-color); color: var(--bg-dark); font-weight: 700; border: none; padding: 12px; font-size: 16px; border-radius: 5px; cursor: pointer; }
 .error-box { padding: 1rem; margin-top: 1rem; background-color: #ffebee; color: #c62828; border-radius: 5px; text-align: center; }
+/* New style for the link */
+.switch-form { text-align: center; margin-top: 1.5rem; font-size: 0.9rem; }
+.switch-form a { color: var(--accent-color); text-decoration: none; }
 </style>

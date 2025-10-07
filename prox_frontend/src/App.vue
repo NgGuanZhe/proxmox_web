@@ -51,6 +51,12 @@ import { RouterLink, RouterView } from 'vue-router'
             <span class="text">Lab Playground</span>
           </RouterLink>
         </li>
+        <li>
+          <RouterLink to="/users">
+            <span class="icon">👥</span>
+            <span class="text">User Management</span>
+          </RouterLink>
+        </li>
       </ul>
     </nav>
 

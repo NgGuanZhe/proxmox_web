@@ -1,5 +1,9 @@
 from fastapi import FastAPI
 from app.routers import vms, networks, sdn, lab_builder, labs, auth
+from app import models # <-- Import models
+from app.database import engine # <-- Import engine
+
+models.Base.metadata.create_all(bind=engine) # <-- Add this line
 
 app = FastAPI(
     title="Proxmox Cyber Range API",

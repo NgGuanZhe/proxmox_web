@@ -7,6 +7,8 @@ import SdnView from '../views/SdnView.vue'
 import LabBuilderView from '../views/LabBuilderView.vue'
 import LabPlaygroundView from '../views/LabPlaygroundView.vue'
 import LoginView from '../views/LoginView.vue' // <-- Import the new Login page
+import RegisterView from '../views/RegisterView.vue'
+import UserManagementView from '../views/UserManagementView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -59,6 +61,18 @@ const router = createRouter({
       name: 'login',
       component: LoginView
       // This page does NOT require auth
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: RegisterView
+      // This page does NOT require auth
+    },
+    { 
+      path: '/users', 
+      name: 'users', 
+      component: UserManagementView,
+      meta: { requiresAuth: true }
     }
   ]
 })

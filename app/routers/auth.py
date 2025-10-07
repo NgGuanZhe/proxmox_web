@@ -1,25 +1,42 @@
+import re
 from datetime import datetime, timedelta, timezone
-from typing import Union
-from typing_extensions import Annotated # <-- This is the corrected import
+from typing import Union, List
+from typing_extensions import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-import jwt
-from jwt.exceptions import InvalidTokenError
-from pwdlib import PasswordHash
+from jose import JWTError, jwt
+from passlib.context import CryptContext
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
-# --- Configuration ---
+# Import your new database models and session manager
+from .. import models
+from ..database import SessionLocal
+
+# --- Configuration (unchanged) ---
 SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # --- Setup ---
 router = APIRouter()
-password_hash = PasswordHash.recommended()
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/token")
 
-# --- Pydantic Models ---
+# --- Pydantic Models (updated for database interaction) ---
+class UserBase(BaseModel):
+    username: str
+
+class UserCreate(UserBase):
+    password: str
+
+class User(UserBase):
+    id: int
+    disabled: bool
+    class Config:
+        orm_mode = True
+
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -27,40 +44,38 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     username: Union[str, None] = None
 
-class User(BaseModel):
-    username: str
-    email: Union[str, None] = None
-    full_name: Union[str, None] = None
-    disabled: Union[bool, None] = None
+# --- Database Dependency ---
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-class UserInDB(User):
-    hashed_password: str
+# --- Security Functions (now use the DB) ---
+def get_user(db: Session, username: str):
+    return db.query(models.User).filter(models.User.username == username).first()
 
-# --- Fake Database ---
-# The password for "johndoe" is "secret"
-fake_users_db = {
-    "johndoe": {
-        "username": "johndoe",
-        "full_name": "John Doe",
-        "email": "johndoe@example.com",
-        "hashed_password": "$argon2id$v=19$m=65536,t=3,p=4$wagCPXjifgvUFBzq4hqe3w$CYaIb8sB+wtD+Vu/P4uod1+Qof8h+1g7bbDlBID48Rc",
-        "disabled": False,
-    }
-}
-
-# --- Security Helper Functions ---
 def verify_password(plain_password, hashed_password):
-    return password_hash.verify(plain_password, hashed_password)
+    return pwd_context.verify(plain_password, hashed_password)
+    
+def validate_password(password: str):
+    if len(password) < 8:
+        raise HTTPException(status_code=400, detail="Password must be at least 8 characters long.")
+    if not re.search(r"[a-z]", password):
+        raise HTTPException(status_code=400, detail="Password must contain a lowercase letter.")
+    if not re.search(r"[A-Z]", password):
+        raise HTTPException(status_code=400, detail="Password must contain an uppercase letter.")
+    if not re.search(r"\d", password):
+        raise HTTPException(status_code=400, detail="Password must contain a number.")
+    if not re.search(r"[\W_]", password): # \W matches non-alphanumeric characters
+        raise HTTPException(status_code=400, detail="Password must contain a special character.")
+    return True
 
-def get_user(db, username: str):
-    if username in db:
-        user_dict = db[username]
-        return UserInDB(**user_dict)
-
-def authenticate_user(fake_db, username: str, password: str):
-    user = get_user(fake_db, username)
+def authenticate_user(db: Session, username: str, password: str):
+    user = get_user(db, username)
     if not user or not verify_password(password, user.hashed_password):
-        return False
+        return None
     return user
 
 def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
@@ -70,8 +85,8 @@ def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-# --- Dependency Functions for Protecting Endpoints ---
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+# --- Dependency Functions (now use the DB) ---
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -83,9 +98,9 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         if username is None:
             raise credentials_exception
         token_data = TokenData(username=username)
-    except InvalidTokenError:
+    except JWTError:
         raise credentials_exception
-    user = get_user(fake_users_db, username=token_data.username)
+    user = get_user(db, username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
@@ -98,11 +113,12 @@ async def get_current_active_user(
     return current_user
 
 # --- API Endpoints ---
-@router.post("/token", response_model=Token)
+@router.post("/token", response_model=Token, tags=["Authentication"])
 async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    db: Session = Depends(get_db)
 ):
-    user = authenticate_user(fake_users_db, form_data.username, form_data.password)
+    user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -115,9 +131,34 @@ async def login_for_access_token(
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-@router.get("/users/me", response_model=User)
+# --- NEW REGISTRATION ENDPOINT ---
+@router.post("/users/", response_model=User, tags=["Authentication"])
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    db_user = get_user(db, username=user.username)
+    if db_user:
+        raise HTTPException(status_code=400, detail="Username already registered")
+    
+    # Explicitly convert the password to a string before hashing
+    password_str = str(user.password)
+    validate_password(password_str)
+    hashed_password = pwd_context.hash(password_str)
+    
+    db_user = models.User(username=user.username, hashed_password=hashed_password)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+    
+@router.get("/users/me", response_model=User, tags=["Authentication"])
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_active_user)]
 ):
-    """An example protected endpoint to get the current user's details."""
     return current_user
+    
+@router.get("/users/", response_model=List[User], tags=["Authentication"])
+def list_users(db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
+    """
+    Retrieves a list of all users.
+    """
+    users = db.query(models.User).all()
+    return users
