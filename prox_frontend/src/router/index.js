@@ -1,12 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import CloneView from '../views/CloneView.vue' // Import CloneView directly
-import SnapshotView from '../views/SnapshotView.vue' // Import SnapshotView directly
+import CloneView from '../views/CloneView.vue'
+import SnapshotView from '../views/SnapshotView.vue'
 import NetworkView from '../views/NetworkView.vue'
 import SdnView from '../views/SdnView.vue'
 import LabBuilderView from '../views/LabBuilderView.vue'
 import LabPlaygroundView from '../views/LabPlaygroundView.vue'
-
+import LoginView from '../views/LoginView.vue' // <-- Import the new Login page
+import RegisterView from '../views/RegisterView.vue'
+import UserManagementView from '../views/UserManagementView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,35 +16,79 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: HomeView,
+      meta: { requiresAuth: true } // Mark this page as requiring login
     },
     {
       path: '/clone',
       name: 'clone',
-      component: CloneView // Use the imported component
+      component: CloneView,
+      meta: { requiresAuth: true }
     },
     {
       path: '/snapshots',
       name: 'snapshots',
-      component: SnapshotView // Use the imported component
+      component: SnapshotView,
+      meta: { requiresAuth: true }
     },
-    { path: '/networks', 
+    { 
+      path: '/networks', 
       name: 'networks', 
-      component: NetworkView
+      component: NetworkView,
+      meta: { requiresAuth: true }
     },
-    { path: '/sdn', 
+    { 
+      path: '/sdn', 
       name: 'sdn', 
-      component: SdnView
+      component: SdnView,
+      meta: { requiresAuth: true }
     },
-    { path: '/labbuilder', 
+    { 
+      path: '/labbuilder', 
       name: 'labbuilder', 
-      component: LabBuilderView
+      component: LabBuilderView,
+      meta: { requiresAuth: true }
     },
-    { path: '/playground', 
+    { 
+      path: '/playground', 
       name: 'playground', 
-      component: LabPlaygroundView
+      component: LabPlaygroundView,
+      meta: { requiresAuth: true }
+    },
+    // --- THIS IS THE NEW LOGIN ROUTE ---
+    {
+      path: '/login',
+      name: 'login',
+      component: LoginView
+      // This page does NOT require auth
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: RegisterView
+      // This page does NOT require auth
+    },
+    { 
+      path: '/users', 
+      name: 'users', 
+      component: UserManagementView,
+      meta: { requiresAuth: true }
     }
   ]
 })
+
+// --- THIS IS THE NEW SECURITY GUARD ---
+router.beforeEach((to, from, next) => {
+  const loggedIn = localStorage.getItem('access_token');
+
+  // If the page requires login AND the user is not logged in
+  if (to.meta.requiresAuth && !loggedIn) {
+    // Redirect them to the login page
+    next({ name: 'login' });
+  } else {
+    // Otherwise, let them proceed
+    next();
+  }
+});
 
 export default router

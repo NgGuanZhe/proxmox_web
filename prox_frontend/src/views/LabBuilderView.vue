@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { api } from '@/services/apiService'; // <-- Import the new service
 
 const templates = ref([]);
 const isLoading = ref(true);
@@ -51,17 +52,12 @@ async function fetchInitialData() {
   isLoading.value = true;
   error.value = null;
   try {
-    const [vmResponse, zoneResponse] = await Promise.all([
-      fetch('/api/vms'),
-      fetch('/api/sdn/zones')
+    const [allVms, allZones] = await Promise.all([
+      api.get('/vms'),
+      api.get('/sdn/zones')
     ]);
-    if (!vmResponse.ok) throw new Error('Failed to fetch VMs/Templates');
-    if (!zoneResponse.ok) throw new Error('Failed to fetch SDN Zones');
     
-    const allVms = await vmResponse.json();
     templates.value = allVms.filter(vm => vm.hardware_details?.template === 1);
-
-    const allZones = await zoneResponse.json();
     allSdnZones.value = allZones.filter(z => z.type === 'vlan');
 
   } catch (e) {
@@ -73,12 +69,7 @@ async function fetchInitialData() {
 
 async function updateTemplateTags(template, newTags) {
   try {
-    const response = await fetch(`/api/templates/${template.proxmox_id}/tag`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lab_groups: newTags })
-    });
-    if (!response.ok) throw new Error('Failed to update template tags.');
+    await api.put(`/templates/${template.proxmox_id}/tag`, { lab_groups: newTags });
     await fetchInitialData();
   } catch (e) {
     error.value = e.message;
@@ -109,18 +100,12 @@ async function instantiateLab() {
   error.value = null;
   launchStatus.value = null;
   try {
-    const response = await fetch('/api/labs/instantiate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        lab_group: selectedLabGroup.value,
-        vlan_zone: launchVlanZone.value,
-        vlan_tag: parseInt(launchVlanTag.value)
-      })
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.detail || 'Failed to launch lab.');
-    launchStatus.value = result;
+    const payload = { 
+      lab_group: selectedLabGroup.value,
+      vlan_zone: launchVlanZone.value,
+      vlan_tag: parseInt(launchVlanTag.value)
+    };
+    launchStatus.value = await api.post('/labs/instantiate', payload);
   } catch (e) {
     error.value = e.message;
   } finally {

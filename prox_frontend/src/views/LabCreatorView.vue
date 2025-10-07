@@ -1,13 +1,17 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { api } from '@/services/apiService'; // <-- Import the new service
 import VmCard from '../components/VmCard.vue';
 import VmDetailModal from '../components/VmDetailModal.vue';
 
+// State for the page
 const zones = ref([]);
 const vms = ref([]);
 const isLoading = ref(true);
 const error = ref(null);
 const selectedVm = ref(null);
+
+// State for the creation form
 const selectedZone = ref('');
 const newVlanTag = ref('');
 const isCreating = ref(false);
@@ -37,14 +41,12 @@ async function fetchInitialData() {
   error.value = null;
   creationStatus.value = null;
   try {
-    const [zoneResponse, vmResponse] = await Promise.all([
-      fetch('/api/sdn/zones'),
-      fetch('/api/vms')
+    const [allZones, allVms] = await Promise.all([
+      api.get('/sdn/zones'),
+      api.get('/vms')
     ]);
-    if (!zoneResponse.ok) throw new Error('Failed to fetch SDN Zones');
-    if (!vmResponse.ok) throw new Error('Failed to fetch VMs');
-    const allZones = await zoneResponse.json();
-    vms.value = await vmResponse.json();
+    
+    vms.value = allVms;
     zones.value = allZones.filter(z => z.type === 'vlan');
   } catch (e) {
     error.value = e.message;
@@ -62,14 +64,8 @@ async function createVlanLab() {
   error.value = null;
   creationStatus.value = null;
   try {
-    const response = await fetch('/api/labs/create_vlan_lab', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ zone: selectedZone.value, tag: parseInt(newVlanTag.value) })
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.detail || 'Failed to create lab.');
-    creationStatus.value = result;
+    const payload = { zone: selectedZone.value, tag: parseInt(newVlanTag.value) };
+    creationStatus.value = await api.post('/labs/create_vlan_lab', payload);
     await fetchInitialData();
   } catch (e) {
     error.value = e.message;
@@ -82,19 +78,14 @@ function handleViewVm(vmToShow) {
   selectedVm.value = vmToShow;
 }
 
-// --- NEW FUNCTIONS ADDED ---
 async function handleDeleteVm(vmToDelete) {
-  if (!confirm(`Are you sure you want to permanently delete the VM "${vmToDelete.name}"? This cannot be undone.`)) {
+  if (!confirm(`Are you sure you want to permanently delete the VM "${vmToDelete.name}"?`)) {
     return;
   }
   isLoading.value = true;
   error.value = null;
   try {
-    const response = await fetch(`/api/vms/${vmToDelete.proxmox_id}`, { method: 'DELETE' });
-    const result = await response.json();
-    if (!response.ok) {
-      throw new Error(result.detail || 'Delete action failed.');
-    }
+    await api.delete(`/vms/${vmToDelete.proxmox_id}`);
     setTimeout(() => {
       fetchInitialData();
     }, 2000);
@@ -112,15 +103,7 @@ async function handleRenameVm(vmToRename) {
   isLoading.value = true;
   error.value = null;
   try {
-    const response = await fetch(`/api/vms/${vmToRename.proxmox_id}/rename`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ new_name: newName.trim() })
-    });
-    const result = await response.json();
-    if (!response.ok) {
-      throw new Error(result.detail || 'Rename action failed.');
-    }
+    await api.put(`/vms/${vmToRename.proxmox_id}/rename`, { new_name: newName.trim() });
     await fetchInitialData();
   } catch(e) {
     error.value = e.message;
