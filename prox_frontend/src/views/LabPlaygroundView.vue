@@ -67,7 +67,7 @@ async function deleteLab(groupName) {
   error.value = null;
   actionStatus.value = null;
   try {
-    const result = await api.delete(`/labs/${vnetName}`);
+    const result = await api.delete(`/labs/${groupName}`);
     actionStatus.value = result.message;
     setTimeout(() => { fetchVMs() }, 5000);
   } catch(e) {

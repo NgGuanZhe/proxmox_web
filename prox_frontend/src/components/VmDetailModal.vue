@@ -1,39 +1,31 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { api } from '@/services/apiService'; // <-- Import the new service
 
 const props = defineProps({
   vm: Object
 })
 const emit = defineEmits(['close'])
 
-// State for snapshots
 const snapshots = ref([])
 const newSnapshotName = ref('')
 const isLoadingSnapshots = ref(false)
-
-// State for network management
 const availableNetworks = ref([])
-const isEditingNic = ref(null) // Holds the device name, e.g., 'net0'
+const isEditingNic = ref(null)
 const selectedBridge = ref('')
 
-
-// --- Lifecycle Hook ---
 onMounted(async () => {
-  // When the modal opens, fetch snapshots and available networks
   if (props.vm && (!props.vm.hardware_details || props.vm.hardware_details.template !== 1)) {
     await fetchSnapshots()
     await fetchNetworks()
   }
 })
 
-// --- Snapshot Functions ---
 async function fetchSnapshots() {
   if (!props.vm) return
   isLoadingSnapshots.value = true
   try {
-    const response = await fetch(`/api/vms/${props.vm.proxmox_id}/snapshots`)
-    if (!response.ok) throw new Error('Failed to fetch snapshots.')
-    snapshots.value = await response.json()
+    snapshots.value = await api.get(`/vms/${props.vm.proxmox_id}/snapshots`);
   } catch (e) {
     alert(e.message)
   } finally {
@@ -47,13 +39,7 @@ async function createSnapshot() {
     return
   }
   try {
-    const response = await fetch(`/api/vms/${props.vm.proxmox_id}/snapshots`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: newSnapshotName.value.trim() })
-    })
-    const result = await response.json()
-    if (!response.ok) throw new Error(result.detail || 'Failed to create snapshot.')
+    await api.post(`/vms/${props.vm.proxmox_id}/snapshots`, { name: newSnapshotName.value.trim() });
     alert(`Successfully created snapshot: ${newSnapshotName.value}`)
     newSnapshotName.value = ''
     await fetchSnapshots()
@@ -63,13 +49,11 @@ async function createSnapshot() {
 }
 
 async function rollbackSnapshot(snapname) {
-  if (!confirm(`Are you sure you want to roll back this VM to the snapshot "${snapname}"? This cannot be undone.`)) {
+  if (!confirm(`Are you sure you want to roll back this VM to the snapshot "${snapname}"?`)) {
     return
   }
   try {
-    const response = await fetch(`/api/vms/${props.vm.proxmox_id}/snapshots/${snapname}/rollback`, { method: 'POST' })
-    const result = await response.json()
-    if (!response.ok) throw new Error(result.detail || 'Failed to roll back snapshot.')
+    await api.post(`/vms/${props.vm.proxmox_id}/snapshots/${snapname}/rollback`, {});
     alert(`Successfully rolled back to snapshot: ${snapname}. The main dashboard will refresh.`)
     emit('close')
   } catch (e) {
@@ -77,12 +61,9 @@ async function rollbackSnapshot(snapname) {
   }
 }
 
-// --- Network Functions ---
 async function fetchNetworks() {
   try {
-    const response = await fetch('/api/networks')
-    if (!response.ok) throw new Error('Failed to fetch networks.')
-    const networkData = await response.json()
+    const networkData = await api.get('/networks');
     const bridges = []
     for (const node in networkData) {
       for (const iface of networkData[node]) {
@@ -105,13 +86,8 @@ function startEditing(nic) {
 async function saveNetworkChange() {
   if (!isEditingNic.value || !selectedBridge.value) return;
   try {
-    const response = await fetch(`/api/vms/${props.vm.proxmox_id}/reconfigure_network`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ iface: isEditingNic.value, bridge: selectedBridge.value })
-    })
-    const result = await response.json()
-    if (!response.ok) throw new Error(result.detail || 'Failed to update network.')
+    const payload = { iface: isEditingNic.value, bridge: selectedBridge.value };
+    await api.put(`/vms/${props.vm.proxmox_id}/reconfigure_network`, payload);
     alert('Network updated successfully! The dashboard will refresh.')
     emit('close')
   } catch (e) {
@@ -120,7 +96,6 @@ async function saveNetworkChange() {
     isEditingNic.value = null
   }
 }
-
 </script>
 
 <template>
