@@ -10,3 +10,5 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=True)
     full_name = Column(String, nullable=True)
     disabled = Column(Boolean, default=False)
+    active_token_jti = Column(String, nullable=True)
+    is_admin = Column(Boolean, default=False)

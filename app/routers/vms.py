@@ -5,8 +5,11 @@ from fastapi import APIRouter, HTTPException, Depends # <-- Add Depends
 from pydantic import BaseModel
 from app.core.proxmox import get_proxmox_connection
 from app.routers.auth import get_current_active_user # <-- Import the security function
+from filelock import FileLock, Timeout
 
 router = APIRouter()
+clone_lock = FileLock("/tmp/clone_templates.lock")
+delete_clones_lock = FileLock("/tmp/delete_clones.lock")
 
 class VmNetworkRequest(BaseModel):
     iface: str  # e.g., net0
@@ -129,55 +132,61 @@ def stop_all_vms(current_user: dict = Depends(get_current_active_user)):
 
 @router.post("/clone_templates", tags=["Virtual Machines"])
 def clone_all_templates(current_user: dict = Depends(get_current_active_user)):
-    proxmox = get_proxmox_connection()
     try:
-        all_vms_and_templates = [];
-        for node in proxmox.nodes.get(): all_vms_and_templates.extend(proxmox.nodes(node['node']).qemu.get())
-        existing_ids = {vm['vmid'] for vm in all_vms_and_templates}
-        max_id = max([id for id in existing_ids if id >= 1000] or [999]); next_vmid = max_id + 1
-        cloned_vms = []
-        for node in proxmox.nodes.get():
-            node_name = node['node']
-            for template_summary in proxmox.nodes(node_name).qemu.get():
-                if template_summary.get('template') == 1:
-                    template_id = template_summary['vmid']
-                    new_clone_name = "{}-clone-{}".format(template_summary.get('name', 'template'), next_vmid)
-                    clone_description = "Cloned from template: {}".format(template_summary.get('name', 'unknown'))
-                    proxmox.nodes(node_name).qemu(template_id).clone.post(newid=next_vmid, name=new_clone_name, full=0, description=clone_description)
-                    cloned_vms.append({"template": template_summary.get('name'), "new_id": next_vmid, "new_name": new_clone_name})
-                    next_vmid += 1
-        if not cloned_vms: return {"message": "No templates found to clone."}
-        return {"message": "Cloning process completed successfully.", "cloned_vms": cloned_vms}
+        with clone_lock.acquire(timeout=300):
+            proxmox = get_proxmox_connection()
+            all_vms_and_templates = [];
+            for node in proxmox.nodes.get(): all_vms_and_templates.extend(proxmox.nodes(node['node']).qemu.get())
+            existing_ids = {vm['vmid'] for vm in all_vms_and_templates}
+            max_id = max([id for id in existing_ids if id >= 1000] or [999]); next_vmid = max_id + 1
+            cloned_vms = []
+            for node in proxmox.nodes.get():
+                node_name = node['node']
+                for template_summary in proxmox.nodes(node_name).qemu.get():
+                    if template_summary.get('template') == 1:
+                        template_id = template_summary['vmid']
+                        new_clone_name = "{}-clone-{}".format(template_summary.get('name', 'template'), next_vmid)
+                        clone_description = "Cloned from template: {}".format(template_summary.get('name', 'unknown'))
+                        proxmox.nodes(node_name).qemu(template_id).clone.post(newid=next_vmid, name=new_clone_name, full=0, description=clone_description)
+                        cloned_vms.append({"template": template_summary.get('name'), "new_id": next_vmid, "new_name": new_clone_name})
+                        next_vmid += 1
+            if not cloned_vms: return {"message": "No templates found to clone."}
+            return {"message": "Cloning process completed successfully.", "cloned_vms": cloned_vms}
+    except Timeout:
+        raise HTTPException(status_code=503, detail="Another cloning operation is in progress. Please try again.")
     except Exception as e:
         raise HTTPException(status_code=500, detail="An error occurred during cloning: {}".format(e))
 
 @router.post("/vms/delete_clones", tags=["Virtual Machines"])
 def delete_all_clones(current_user: dict = Depends(get_current_active_user)):
-    proxmox = get_proxmox_connection()
-    deleted_vms = []
-    errors = []
     try:
-        for node in proxmox.nodes.get():
-            node_name = node['node']
-            for vm_summary in proxmox.nodes(node_name).qemu.get():
-                vmid = vm_summary.get('vmid')
-                if not vmid: continue
-                vm_config = proxmox.nodes(node_name).qemu(vmid).config.get()
-                description = vm_config.get('description', '')
-                if "Cloned from template:" in description:
-                    try:
-                        if vm_summary.get('status') == 'running':
-                            proxmox.nodes(node_name).qemu(vmid).status.stop.post()
-                            for i in range(20):
-                                time.sleep(3)
-                                if proxmox.nodes(node_name).qemu(vmid).status.current.get()['status'] == 'stopped': break
-                            else:
-                                raise Exception("Timed out waiting for VM to stop.")
-                        proxmox.nodes(node_name).qemu(vmid).delete()
-                        deleted_vms.append(vm_summary.get('name'))
-                    except Exception as delete_error:
-                        errors.append("Could not delete {}: {}".format(vm_summary.get('name'), delete_error))
-        return {"message": "Cleanup process completed.", "deleted_vms": deleted_vms, "errors": errors}
+        with delete_clones_lock.acquire(timeout=300):
+            proxmox = get_proxmox_connection()
+            deleted_vms = []
+            errors = []
+            for node in proxmox.nodes.get():
+                node_name = node['node']
+                for vm_summary in proxmox.nodes(node_name).qemu.get():
+                    vmid = vm_summary.get('vmid')
+                    if not vmid: continue
+                    vm_config = proxmox.nodes(node_name).qemu(vmid).config.get()
+                    description = vm_config.get('description', '')
+                    if "Cloned from template:" in description:
+                        try:
+                            if vm_summary.get('status') == 'running':
+                                proxmox.nodes(node_name).qemu(vmid).status.stop.post()
+                                for i in range(20):
+                                    time.sleep(3)
+                                    if proxmox.nodes(node_name).qemu(vmid).status.current.get()['status'] == 'stopped': break
+                                else:
+                                    raise Exception("Timed out waiting for VM to stop.")
+                            proxmox.nodes(node_name).qemu(vmid).delete()
+                            deleted_vms.append(vm_summary.get('name'))
+                        except Exception as delete_error:
+                            errors.append("Could not delete {}: {}".format(vm_summary.get('name'), delete_error))
+            return {"message": "Cleanup process completed.", "deleted_vms": deleted_vms, "errors": errors}
+    except Timeout:
+        raise HTTPException(status_code=503, detail="Another delete operation is in progress. Please try again.")
     except Exception as e:
         raise HTTPException(status_code=500, detail="An error occurred during cleanup: {}".format(e))
 

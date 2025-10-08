@@ -1,4 +1,5 @@
 import re
+import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Union, List
 from typing_extensions import Annotated
@@ -34,6 +35,7 @@ class UserCreate(UserBase):
 class User(UserBase):
     id: int
     disabled: bool
+    is_admin: bool
     class Config:
         orm_mode = True
 
@@ -43,6 +45,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Union[str, None] = None
+    jti: Union[str, None] = None
 
 # --- Database Dependency ---
 def get_db():
@@ -55,7 +58,7 @@ def get_db():
 # --- Security Functions (now use the DB) ---
 def get_user(db: Session, username: str):
     return db.query(models.User).filter(models.User.username == username).first()
-
+    
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
     
@@ -82,8 +85,9 @@ def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=15))
     to_encode.update({"exp": expire})
+    to_encode.setdefault("jti", str(uuid.uuid4()))
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    return encoded_jwt, to_encode["jti"]
 
 # --- Dependency Functions (now use the DB) ---
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
@@ -95,14 +99,18 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Se
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
-        if username is None:
+        jti: str = payload.get("jti")
+        if username is None or jti is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
+        token_data = TokenData(username=username, jti=jti)
     except JWTError:
         raise credentials_exception
     user = get_user(db, username=token_data.username)
     if user is None:
         raise credentials_exception
+    if user.active_token_jti != token_data.jti:
+        raise credentials_exception
+        
     return user
 
 async def get_current_active_user(
@@ -111,7 +119,13 @@ async def get_current_active_user(
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
-
+    
+async def get_current_admin_user(
+    current_user: Annotated[User, Depends(get_current_active_user)]
+):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+    return current_user
 # --- API Endpoints ---
 @router.post("/token", response_model=Token, tags=["Authentication"])
 async def login_for_access_token(
@@ -126,9 +140,11 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
+    access_token, jti = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
+    user.active_token_jti = jti
+    db.commit()
     return {"access_token": access_token, "token_type": "bearer"}
 
 # --- NEW REGISTRATION ENDPOINT ---
@@ -148,6 +164,19 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_user)
     return db_user
+    
+@router.delete("/users/{user_id}", tags=["Authentication"])
+def delete_user(user_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_admin_user)):
+    """Deletes a user. Admin only."""
+    user_to_delete = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user_to_delete:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user_to_delete.id == current_user.id:
+        raise HTTPException(status_code=400, detail="Admins cannot delete themselves.")
+    
+    db.delete(user_to_delete)
+    db.commit()
+    return {"message": "User deleted successfully."}
     
 @router.get("/users/me", response_model=User, tags=["Authentication"])
 async def read_users_me(

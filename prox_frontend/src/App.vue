@@ -1,5 +1,20 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { userState } from '@/auth'
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  userState.fetchUser()
+})
+
+const router = useRouter();
+
+function logout() {
+  // Remove the token from storage
+  localStorage.removeItem('access_token');
+  // Redirect to the login page
+  router.push('/login');
+}
 </script>
 
 <template>
@@ -51,13 +66,17 @@ import { RouterLink, RouterView } from 'vue-router'
             <span class="text">Lab Playground</span>
           </RouterLink>
         </li>
-        <li>
+        <li v-if="userState.isAdmin">
           <RouterLink to="/users">
             <span class="icon">👥</span>
             <span class="text">User Management</span>
           </RouterLink>
         </li>
       </ul>
+      <div class="sidebar-footer">
+        <button @click="logout" class="logout-button">Logout</button>
+      </div>
+     
     </nav>
 
     <div class="main-content">

@@ -39,6 +39,8 @@ def create_vlan_lab(request: VlanLabRequest, current_user: dict = Depends(get_cu
                 zone=request.zone,
                 tag=request.tag
             )
+            time.sleep(2)
+            proxmox.cluster.sdn.put()
 
             all_vms = []
             nodes = proxmox.nodes.get()
@@ -145,6 +147,8 @@ def delete_lab(lab_group_name: str, current_user: dict = Depends(get_current_act
             # After all VMs are deleted, delete the VNET if we found one
             if vnet_to_delete:
                 proxmox.cluster.sdn.vnets(vnet_to_delete).delete()
+                time.sleep(2)
+                proxmox.cluster.sdn.put()
 
             return {"message": "Successfully deleted lab '{}' and VNET '{}'.".format(lab_group_name, vnet_to_delete), "deleted_vms": deleted_vms}
 
