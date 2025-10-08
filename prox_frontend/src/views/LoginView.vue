@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { userState } from '@/auth';
 
 const username = ref('');
 const password = ref('');
@@ -26,6 +27,8 @@ async function handleLogin() {
     
     // Save the token and redirect to the dashboard
     localStorage.setItem('access_token', data.access_token);
+    userState.isAuthenticated = true;
+    await userState.fetchUser();
     router.push('/'); // Redirect to the main dashboard page
 
   } catch (e) {

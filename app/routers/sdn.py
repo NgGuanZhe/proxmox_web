@@ -1,3 +1,4 @@
+import time
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from app.core.proxmox import get_proxmox_connection
@@ -44,6 +45,8 @@ def create_sdn_zone(request: SdnZoneRequest, current_user: dict = Depends(get_cu
     try:
         # Proxmox API call to create a new SDN Zone
         result = proxmox.cluster.sdn.zones.post(**params)
+        time.sleep(2) # Give a moment for tasks to register
+        proxmox.cluster.sdn.put()
         return {"message": "Successfully created SDN Zone '{}' of type '{}'".format(request.zone, request.type)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -55,6 +58,8 @@ def delete_sdn_zone(zone: str, current_user: dict = Depends(get_current_active_u
     try:
         # Proxmox API call to delete the zone
         result = proxmox.cluster.sdn.zones(zone).delete()
+        time.sleep(2) # Give a moment for tasks to register
+        proxmox.cluster.sdn.put()
         return {"message": "Successfully deleted SDN Zone '{}'".format(zone)}
     except Exception as e:
         # Provide a helpful error if the zone is not empty
@@ -85,6 +90,8 @@ def create_sdn_vnet(request: SdnVnetRequest, current_user: dict = Depends(get_cu
     
     try:
         result = proxmox.cluster.sdn.vnets.post(**params)
+        time.sleep(2) # Give a moment for tasks to register
+        proxmox.cluster.sdn.put()
         return {"message": "Successfully created VNET '{}' in zone '{}'".format(request.vnet, request.zone)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -96,6 +103,8 @@ def delete_sdn_vnet(vnet: str, current_user: dict = Depends(get_current_active_u
     try:
         # Proxmox API call to delete the vnet
         result = proxmox.cluster.sdn.vnets(vnet).delete()
+        time.sleep(2) # Give a moment for tasks to register
+        proxmox.cluster.sdn.put()
         return {"message": "Successfully deleted SDN VNET '{}'".format(vnet)}
     except Exception as e:
         if 'in use' in str(e):

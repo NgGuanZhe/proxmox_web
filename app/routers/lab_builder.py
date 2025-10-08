@@ -72,6 +72,8 @@ def instantiate_lab(request: LabInstantiateRequest, current_user: dict = Depends
         
         try:
             proxmox.cluster.sdn.vnets.post(vnet=new_vnet_name, zone=request.vlan_zone, tag=request.vlan_tag)
+            time.sleep(2)
+            proxmox.cluster.sdn.put()
         except Exception as vnet_error:
             raise Exception("Failed to create SDN VNET. Proxmox Error: {}".format(vnet_error))
         
