@@ -10,5 +10,6 @@ ONLY WORKS ON LOCAL NETWORK???
 - Step 8: npm i in prox_frontend then npm run dev (for frontend)
 - Step 9: uvicorn app.main:app --reload --host 0.0.0.0 (for backend) (ye ik its 0.0.0.0 which is bad but its for my own development purposes rn)
 - Step 10: Open browser and put in the network ip addr after npm run dev
+- Step 11: Log checking can be done by tail -f app.log
 
 Its not a read me ah im jus writing so i wont forget.
