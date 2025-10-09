@@ -32,5 +32,5 @@ class LogConfig(BaseModel):
         },
     }
     loggers: dict = {
-        LOGGER_NAME: {"handlers": ["default", "file"], "level": LOG_LEVEL},
+        LOGGER_NAME: {"handlers": ["file"], "level": LOG_LEVEL},
     }

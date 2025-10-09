@@ -145,10 +145,10 @@ def instantiate_lab(request: LabInstantiateRequest, current_user: dict = Depends
         if not created_vms:
             proxmox.cluster.sdn.vnets(new_vnet_name).delete()
             proxmox.cluster.sdn.put()
-            logging.error(f"No templates found in lab group '{request.lab_group}'. Deleting newly created Vnet {new_vnet_name}.")
+            logger.error(f"No templates found in lab group '{request.lab_group}'. Deleting newly created Vnet {new_vnet_name}.")
             raise HTTPException(status_code=404, detail="No templates found in lab group '{}'.".format(request.lab_group))
-        logging.info(f"Lab '{request.lab_group}' instance {next_instance_num} instantiated successfully on VNET '{new_vnet_name}'. Created VMs: {created_vms}")
+        logger.info(f"Lab '{request.lab_group}' instance {next_instance_num} instantiated successfully on VNET '{new_vnet_name}'. Created VMs: {created_vms}")
         return {"message": "Lab '{}' instance {} instantiated successfully on VNET '{}'.".format(request.lab_group, next_instance_num, new_vnet_name), "created_vms": created_vms}
     except Exception as e:
-        logging.error(f"An error occurred: {save_error(e)}.")
+        logger.error(f"An error occurred: {save_error(e)}.")
         raise HTTPException(status_code=500, detail="An error occurred: {}".format(e))
