@@ -350,3 +350,21 @@ requests.exceptions.ConnectTimeout: HTTPSConnectionPool(host='192.168.26.132', p
 [32mINFO[0m:     | 2025-10-09 01:47:48 | Successfully retrieved 5 VMs.
 [32mINFO[0m:     | 2025-10-09 01:47:50 | gz is requesting to list all user account
 [32mINFO[0m:     | 2025-10-09 01:47:50 | Successfully listed all user account.
+[32mINFO[0m:     | 2025-10-09 02:05:19 | 'gz' requested for login access token.
+[32mINFO[0m:     | 2025-10-09 02:05:19 | Successful login!
+[32mINFO[0m:     | 2025-10-09 02:05:31 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 02:05:31 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 02:05:44 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 02:05:44 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 02:05:44 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 02:05:44 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 02:06:59 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 02:06:59 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 02:09:33 | gz is requesting to list all user account
+[32mINFO[0m:     | 2025-10-09 02:09:33 | Successfully listed all user account.
+[32mINFO[0m:     | 2025-10-09 02:09:34 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 02:09:34 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 02:09:36 | User 'gz' requested to delete vlan lab.
+[32mINFO[0m:     | 2025-10-09 02:09:42 | Successfully deleted lab 'etst1_cloned1' and VNET 'vnet1'. Deleted VMs: ['etst1-paopa-1002', 'etst1-ubutnapa-1001']
+[32mINFO[0m:     | 2025-10-09 02:09:47 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 02:09:47 | Successfully retrieved 3 VMs.
