@@ -1,0 +1,352 @@
+[32mINFO[0m:     | 2025-10-08 22:45:22 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-08 22:45:23 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-08 22:46:58 | User 'gz' requested to list all VMs.
+[31mERROR[0m:    | 2025-10-08 22:47:03 | Failed to list VMs: HTTPSConnectionPool(host='192.168.26.132', port=8006): Max retries exceeded with url: /api2/json/nodes (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7fe2af2f2fa0>, 'Connection to 192.168.26.132 timed out. (connect timeout=5)'))
+Traceback (most recent call last):
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/connection.py", line 199, in _new_conn
+    sock = connection.create_connection(
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    raise err
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    sock.connect(sa)
+socket.timeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 789, in urlopen
+    response = self._make_request(
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 490, in _make_request
+    raise new_e
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 466, in _make_request
+    self._validate_conn(conn)
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 1095, in _validate_conn
+    conn.connect()
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/connection.py", line 693, in connect
+    self.sock = sock = self._new_conn()
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/connection.py", line 208, in _new_conn
+    raise ConnectTimeoutError(
+urllib3.exceptions.ConnectTimeoutError: (<urllib3.connection.HTTPSConnection object at 0x7fe2af2f2fa0>, 'Connection to 192.168.26.132 timed out. (connect timeout=5)')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 843, in urlopen
+    retries = retries.increment(
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='192.168.26.132', port=8006): Max retries exceeded with url: /api2/json/nodes (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7fe2af2f2fa0>, 'Connection to 192.168.26.132 timed out. (connect timeout=5)'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/gz2/Desktop/proxmox_web/app/routers/vms.py", line 64, in list_vms
+    for node in proxmox.nodes.get():
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/proxmoxer/core.py", line 167, in get
+    return self(args)._request("GET", params=params)
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/proxmoxer/core.py", line 142, in _request
+    resp = self._store["session"].request(method, url, data=data, params=params)
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/proxmoxer/backends/https.py", line 235, in request
+    return super().request(
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/requests/adapters.py", line 688, in send
+    raise ConnectTimeout(e, request=request)
+requests.exceptions.ConnectTimeout: HTTPSConnectionPool(host='192.168.26.132', port=8006): Max retries exceeded with url: /api2/json/nodes (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7fe2af2f2fa0>, 'Connection to 192.168.26.132 timed out. (connect timeout=5)'))
+[32mINFO[0m:     | 2025-10-08 23:41:49 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-08 23:41:49 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-08 23:42:00 | User 'gz' requested to stop all VMs.
+[32mINFO[0m:     | 2025-10-08 23:42:03 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-08 23:42:03 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-08 23:42:05 | User 'gz' requested to start all VMs.
+[32mINFO[0m:     | 2025-10-08 23:42:08 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-08 23:42:08 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-08 23:42:20 | User 'gz' requested to stop all VMs.
+[32mINFO[0m:     | 2025-10-08 23:42:23 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-08 23:42:23 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-08 23:43:32 | User 'gz' requested to start all VMs.
+[32mINFO[0m:     | 2025-10-08 23:43:32 | Successfully started all VMs. VMs started:['ubuntutest']
+[32mINFO[0m:     | 2025-10-08 23:43:35 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-08 23:43:35 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-08 23:43:37 | User 'gz' requested to stop all VMs.
+[32mINFO[0m:     | 2025-10-08 23:43:37 | Successfully stopped all runnign VMs. VMs stopped: ['ubuntutest']
+[32mINFO[0m:     | 2025-10-08 23:43:40 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-08 23:43:40 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-08 23:43:55 | User 'gz' requested to clone all VM templates.
+[32mINFO[0m:     | 2025-10-08 23:44:04 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-08 23:44:04 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-08 23:45:31 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-08 23:45:31 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-08 23:45:32 | User 'gz' requested to clone all VM templates.
+[32mINFO[0m:     | 2025-10-08 23:45:32 | Cloning process completed successfully. Cloned VMs: [{'template': 'ubutnapa', 'new_id': 1002, 'new_name': 'ubutnapa-clone-1002'}, {'template': 'paopa', 'new_id': 1003, 'new_name': 'paopa-clone-1003'}]
+[32mINFO[0m:     | 2025-10-08 23:45:43 | User 'gz' requested to delete all cloned VM templates.
+[32mINFO[0m:     | 2025-10-08 23:45:43 | Cleanup process completed. Deleted VMs: ['ubutnapa-clone-1000', 'ubutnapa-clone-1002', 'paopa-clone-1001', 'paopa-clone-1003']
+[32mINFO[0m:     | 2025-10-08 23:45:57 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-08 23:45:57 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-08 23:45:59 | User 'gz' requested to list snapshot for VM 101
+[32mINFO[0m:     | 2025-10-08 23:45:59 | Succesfully retrieved snapshot for VM 101
+[32mINFO[0m:     | 2025-10-08 23:46:10 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-08 23:46:10 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-08 23:46:12 | User 'gz' requested to list snapshot for VM 101
+[32mINFO[0m:     | 2025-10-08 23:46:12 | Succesfully retrieved snapshot for VM 101
+[32mINFO[0m:     | 2025-10-08 23:46:22 | User 'gz' requested to list snapshot for VM 101
+[32mINFO[0m:     | 2025-10-08 23:46:22 | Succesfully retrieved snapshot for VM 101
+[32mINFO[0m:     | 2025-10-08 23:46:30 | User 'gz' requested to reconfigure network for VM 101
+[32mINFO[0m:     | 2025-10-08 23:46:30 | Successfully moved net0 on VM 101 to bridge vmbr0.
+[32mINFO[0m:     | 2025-10-08 23:46:43 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-08 23:46:43 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-08 23:46:55 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-08 23:46:55 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-08 23:46:56 | User 'gz' requested to list snapshot for VM 101
+[32mINFO[0m:     | 2025-10-08 23:46:56 | Succesfully retrieved snapshot for VM 101
+[32mINFO[0m:     | 2025-10-08 23:46:59 | User 'gz' requested to reconfigure network for VM 101
+[32mINFO[0m:     | 2025-10-08 23:46:59 | Successfully moved net0 on VM 101 to bridge papa.
+[32mINFO[0m:     | 2025-10-08 23:49:47 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-08 23:49:47 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-09 00:26:40 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 00:26:40 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-09 00:26:52 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 00:27:32 | User 'gz' requested to list all VMs.
+[31mERROR[0m:    | 2025-10-09 00:27:37 | An unexpected error occurred. Full traceback saved to: log_error/error_2025-10-09_00-27-37.104489.log
+Traceback (most recent call last):
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/connection.py", line 199, in _new_conn
+    sock = connection.create_connection(
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    raise err
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    sock.connect(sa)
+socket.timeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 789, in urlopen
+    response = self._make_request(
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 490, in _make_request
+    raise new_e
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 466, in _make_request
+    self._validate_conn(conn)
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 1095, in _validate_conn
+    conn.connect()
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/connection.py", line 693, in connect
+    self.sock = sock = self._new_conn()
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/connection.py", line 208, in _new_conn
+    raise ConnectTimeoutError(
+urllib3.exceptions.ConnectTimeoutError: (<urllib3.connection.HTTPSConnection object at 0x7f4d16c8f070>, 'Connection to 192.168.26.132 timed out. (connect timeout=5)')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 843, in urlopen
+    retries = retries.increment(
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='192.168.26.132', port=8006): Max retries exceeded with url: /api2/json/nodes (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7f4d16c8f070>, 'Connection to 192.168.26.132 timed out. (connect timeout=5)'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/gz2/Desktop/proxmox_web/app/routers/vms.py", line 65, in list_vms
+    for node in proxmox.nodes.get():
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/proxmoxer/core.py", line 167, in get
+    return self(args)._request("GET", params=params)
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/proxmoxer/core.py", line 142, in _request
+    resp = self._store["session"].request(method, url, data=data, params=params)
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/proxmoxer/backends/https.py", line 235, in request
+    return super().request(
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/gz2/Desktop/proxmox_web/venv/lib/python3.8/site-packages/requests/adapters.py", line 688, in send
+    raise ConnectTimeout(e, request=request)
+requests.exceptions.ConnectTimeout: HTTPSConnectionPool(host='192.168.26.132', port=8006): Max retries exceeded with url: /api2/json/nodes (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7f4d16c8f070>, 'Connection to 192.168.26.132 timed out. (connect timeout=5)'))
+[32mINFO[0m:     | 2025-10-09 00:28:15 | User 'gz' requested to list all VMs.
+[31mERROR[0m:    | 2025-10-09 00:28:18 | An unexpected error occurred. Full traceback saved to: log_error/error_2025-10-09_00-28-18.363619.log
+[32mINFO[0m:     | 2025-10-09 00:35:29 | User 'gz' requested to list all VMs.
+[31mERROR[0m:    | 2025-10-09 00:35:32 | Error listing VMs: log_error/error_2025-10-09_00-35-32.187844.log
+[32mINFO[0m:     | 2025-10-09 00:52:56 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 00:52:56 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-09 00:52:58 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 00:52:58 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 00:52:58 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 00:52:58 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-09 00:53:04 | User 'gz' requested to delete a SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 00:53:06 | Successfully deleted SDN VNET 'papaline'.
+[32mINFO[0m:     | 2025-10-09 00:53:08 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 00:53:08 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 00:53:08 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 00:53:08 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-09 00:53:37 | User 'gz' requested to create a SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 00:53:39 | Successfully created VNET 'test' in zone 'papa'.
+[32mINFO[0m:     | 2025-10-09 00:53:40 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 00:53:40 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-09 00:53:40 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 00:53:40 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 00:53:48 | User 'gz' requested to delete SDN Zones 'papa'.
+[31mERROR[0m:    | 2025-10-09 00:53:48 | Error deleting SDN Zone 'papa': log_error/error_2025-10-09_00-53-48.229868.log.
+[32mINFO[0m:     | 2025-10-09 00:53:57 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 00:53:57 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-09 00:53:57 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 00:53:57 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 00:53:58 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 00:53:58 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 00:53:58 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 00:53:58 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-09 00:54:01 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 00:54:01 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-09 00:54:03 | User 'gz' requested to list snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 00:54:03 | Succesfully retrieved snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 00:54:03 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 00:54:03 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 00:54:15 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 00:54:15 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 00:54:15 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-09 00:54:15 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 00:54:29 | User 'gz' requested to delete a SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 00:54:31 | Successfully deleted SDN VNET 'test'.
+[32mINFO[0m:     | 2025-10-09 00:54:37 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 00:54:37 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-09 00:54:37 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 00:54:37 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 00:55:08 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 00:55:08 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 00:55:14 | Successfully deleted bridge papa from node pve.
+[32mINFO[0m:     | 2025-10-09 00:55:15 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 00:55:15 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 00:56:38 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 00:56:38 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-09 00:56:49 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 00:56:49 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-09 00:56:50 | User 'gz' requested to list snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 00:56:50 | Succesfully retrieved snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 00:56:50 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 00:56:50 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 00:56:53 | User 'gz' requested to reconfigure network for VM 101
+[32mINFO[0m:     | 2025-10-09 00:56:53 | Successfully moved VM 101 to bridge vmbr0.
+[32mINFO[0m:     | 2025-10-09 00:56:57 | User 'gz' requested to list snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 00:56:57 | Succesfully retrieved snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 00:56:57 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 00:56:57 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 01:00:36 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 01:00:36 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 01:00:39 | User 'gz' requested to create a networks bridge.
+[32mINFO[0m:     | 2025-10-09 01:00:40 | Successfully created and applied bridge haha on node pve.
+[32mINFO[0m:     | 2025-10-09 01:00:43 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 01:00:43 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 01:34:18 | 'gz3' requested for login access token.
+[31mERROR[0m:    | 2025-10-09 01:34:18 | Incorrect username or password for login
+[32mINFO[0m:     | 2025-10-09 01:34:28 | 'gz3' requested for login access token.
+[32mINFO[0m:     | 2025-10-09 01:34:35 | User 'gz3' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 01:34:35 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-09 01:35:48 | 'gz' requested for login access token.
+[32mINFO[0m:     | 2025-10-09 01:36:07 | 'gz' requested for login access token.
+[32mINFO[0m:     | 2025-10-09 01:38:03 | 'Gz' requested for login access token.
+[31mERROR[0m:    | 2025-10-09 01:38:03 | Incorrect username or password for login
+[32mINFO[0m:     | 2025-10-09 01:38:09 | 'gz' requested for login access token.
+[32mINFO[0m:     | 2025-10-09 01:39:26 | 'gz' requested for login access token.
+[32mINFO[0m:     | 2025-10-09 01:40:52 | 'gz' requested for login access token.
+[32mINFO[0m:     | 2025-10-09 01:40:52 | Successful login!
+[32mINFO[0m:     | 2025-10-09 01:41:02 | gz is requesting to list all user account
+[32mINFO[0m:     | 2025-10-09 01:41:02 | Successfully listed all user account: [<app.models.User object at 0x7fa118f55310>, <app.models.User object at 0x7fa1186da430>, <app.models.User object at 0x7fa1186da370>]
+[32mINFO[0m:     | 2025-10-09 01:41:19 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 01:41:19 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-09 01:41:19 | gz is requesting to list all user account
+[32mINFO[0m:     | 2025-10-09 01:41:19 | Successfully listed all user account.
+[32mINFO[0m:     | 2025-10-09 01:41:27 | Admin 'gz' requesting to delete user '2'
+[32mINFO[0m:     | 2025-10-09 01:41:27 | User '2' deleted successfully by admin 'gz'.
+[32mINFO[0m:     | 2025-10-09 01:41:31 | gz is requesting to list all user account
+[32mINFO[0m:     | 2025-10-09 01:41:31 | Successfully listed all user account.
+[32mINFO[0m:     | 2025-10-09 01:41:44 | New User 'papa' Registered!
+[32mINFO[0m:     | 2025-10-09 01:42:01 | New User 'hoho' Registered!
+[32mINFO[0m:     | 2025-10-09 01:42:15 | 'gz' requested for login access token.
+[32mINFO[0m:     | 2025-10-09 01:42:15 | Successful login!
+[32mINFO[0m:     | 2025-10-09 01:42:22 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 01:42:22 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-09 01:42:27 | User 'gz' requested to clone all VM templates.
+[32mINFO[0m:     | 2025-10-09 01:42:27 | Cloning process completed successfully. Cloned VMs: [{'template': 'ubutnapa', 'new_id': 1000, 'new_name': 'ubutnapa-clone-1000'}, {'template': 'paopa', 'new_id': 1001, 'new_name': 'paopa-clone-1001'}]
+[32mINFO[0m:     | 2025-10-09 01:42:32 | User 'gz' requested to delete all cloned VM templates.
+[32mINFO[0m:     | 2025-10-09 01:42:32 | Cleanup process completed. Deleted VMs: ['paopa-clone-1001', 'ubutnapa-clone-1000']
+[32mINFO[0m:     | 2025-10-09 01:42:35 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 01:42:35 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-09 01:42:36 | User 'gz' requested to start all VMs.
+[32mINFO[0m:     | 2025-10-09 01:42:36 | Successfully started all VMs. VMs started:['ubuntutest']
+[32mINFO[0m:     | 2025-10-09 01:42:39 | User 'gz' requested to stop all VMs.
+[32mINFO[0m:     | 2025-10-09 01:42:39 | Successfully stopped all runnign VMs. VMs stopped: ['ubuntutest']
+[32mINFO[0m:     | 2025-10-09 01:42:39 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 01:42:39 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-09 01:42:41 | User 'gz' requested to clone all VM templates.
+[32mINFO[0m:     | 2025-10-09 01:42:41 | Cloning process completed successfully. Cloned VMs: [{'template': 'ubutnapa', 'new_id': 1000, 'new_name': 'ubutnapa-clone-1000'}, {'template': 'paopa', 'new_id': 1001, 'new_name': 'paopa-clone-1001'}]
+[32mINFO[0m:     | 2025-10-09 01:42:42 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 01:42:42 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 01:42:42 | User 'gz' requested to clone all VM templates.
+[32mINFO[0m:     | 2025-10-09 01:42:42 | Cloning process completed successfully. Cloned VMs: [{'template': 'paopa', 'new_id': 1002, 'new_name': 'paopa-clone-1002'}, {'template': 'ubutnapa', 'new_id': 1003, 'new_name': 'ubutnapa-clone-1003'}]
+[32mINFO[0m:     | 2025-10-09 01:42:45 | User 'gz' requested to start all VMs.
+[32mINFO[0m:     | 2025-10-09 01:42:45 | Successfully started all VMs. VMs started:['paopa-clone-1001', 'ubutnapa-clone-1003', 'ubutnapa-clone-1000', 'ubuntutest', 'paopa-clone-1002']
+[32mINFO[0m:     | 2025-10-09 01:42:48 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 01:42:48 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 01:42:51 | User 'gz' requested to stop all VMs.
+[32mINFO[0m:     | 2025-10-09 01:42:51 | Successfully stopped all runnign VMs. VMs stopped: ['paopa-clone-1002', 'ubuntutest', 'ubutnapa-clone-1000', 'ubutnapa-clone-1003', 'paopa-clone-1001']
+[32mINFO[0m:     | 2025-10-09 01:42:54 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 01:42:54 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 01:42:57 | User 'gz' requested to delete all cloned VM templates.
+[32mINFO[0m:     | 2025-10-09 01:42:57 | Cleanup process completed. Deleted VMs: ['ubutnapa-clone-1003', 'paopa-clone-1001', 'paopa-clone-1002', 'ubutnapa-clone-1000']
+[32mINFO[0m:     | 2025-10-09 01:42:59 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 01:42:59 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 01:43:03 | Successfully deleted bridge haha from node pve.
+[32mINFO[0m:     | 2025-10-09 01:43:05 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 01:43:05 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 01:43:06 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 01:43:06 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 01:43:06 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 01:43:06 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-09 01:43:12 | User 'gz' requested to create a SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 01:43:14 | Successfully created VNET 'hha' in zone 'papa'.
+[32mINFO[0m:     | 2025-10-09 01:43:16 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 01:43:16 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 01:43:16 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 01:43:16 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-09 01:43:17 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 01:43:17 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 01:43:17 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 01:43:17 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-09 01:43:22 | User 'gz' requested to launch/instantiate lab.
+[31mERROR[0m:    | 2025-10-09 01:43:22 | Failed to create SDN VNET: log_error/error_2025-10-09_01-43-22.129627.log
+[32mINFO[0m:     | 2025-10-09 01:43:30 | User 'gz' requested to launch/instantiate lab.
+[32mINFO[0m:     | 2025-10-09 01:43:32 | New SDN Vnet 'vnet1' Created.
+[32mINFO[0m:     | 2025-10-09 01:45:09 | User 'gz' requested to launch/instantiate lab.
+[31mERROR[0m:    | 2025-10-09 01:45:09 | Failed to create SDN VNET: log_error/error_2025-10-09_01-45-09.667568.log
+[32mINFO[0m:     | 2025-10-09 01:45:56 | User 'gz' requested to launch/instantiate lab.
+[31mERROR[0m:    | 2025-10-09 01:45:56 | Failed to create SDN VNET: log_error/error_2025-10-09_01-45-56.734853.log
+[32mINFO[0m:     | 2025-10-09 01:47:20 | User 'gz' requested to launch/instantiate lab.
+[31mERROR[0m:    | 2025-10-09 01:47:20 | Failed to create SDN VNET (Normally is vnet tag alr exist): log_error/error_2025-10-09_01-47-20.917834.log
+[32mINFO[0m:     | 2025-10-09 01:47:26 | User 'gz' requested to tag templates.
+[32mINFO[0m:     | 2025-10-09 01:47:26 | Template tags updated successfully.
+[32mINFO[0m:     | 2025-10-09 01:47:26 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 01:47:26 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 01:47:26 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 01:47:26 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 01:47:31 | User 'gz' requested to tag templates.
+[32mINFO[0m:     | 2025-10-09 01:47:31 | Template tags updated successfully.
+[32mINFO[0m:     | 2025-10-09 01:47:31 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 01:47:31 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 01:47:31 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 01:47:31 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 01:47:34 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 01:47:34 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 01:47:36 | User 'gz' requested to start vlan lab etst1_cloned1.
+[32mINFO[0m:     | 2025-10-09 01:47:36 | Start command sent to all VMs in lab 'etst1_cloned1'. Started VMs: ['etst1-ubutnapa-1001', 'etst1-paopa-1002']
+[32mINFO[0m:     | 2025-10-09 01:47:39 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 01:47:39 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 01:47:45 | User 'gz' requested to stop vlan lab etst1_cloned1.
+[32mINFO[0m:     | 2025-10-09 01:47:45 | Stop command sent to all VMs in lab 'etst1_cloned1'. Started VMs: ['etst1-paopa-1002', 'etst1-ubutnapa-1001']
+[32mINFO[0m:     | 2025-10-09 01:47:48 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 01:47:48 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 01:47:50 | gz is requesting to list all user account
+[32mINFO[0m:     | 2025-10-09 01:47:50 | Successfully listed all user account.

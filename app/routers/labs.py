@@ -1,5 +1,7 @@
 import re
 import time
+import logging
+from app.logging_helper import save_error
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from app.core.proxmox import get_proxmox_connection
@@ -7,6 +9,7 @@ from .vms import _find_vm_node_by_id
 from app.routers.auth import get_current_active_user
 from filelock import FileLock, Timeout
 
+logger = logging.getLogger("proxmox_api")
 router = APIRouter()
 creation_lock = FileLock("/tmp/lab_creation.lock")
 deletion_lock = FileLock("/tmp/lab_deletion.lock")
@@ -17,6 +20,7 @@ class VlanLabRequest(BaseModel):
 
 @router.post("/labs/create_vlan_lab", tags=["Labs"])
 def create_vlan_lab(request: VlanLabRequest, current_user: dict = Depends(get_current_active_user)):
+    logger.info(f"User '{current_user.username}' requested to create vlan lab.")
     try:
         # This will wait up to 5 minutes (300 seconds) for other lab creations to finish
         with creation_lock.acquire(timeout=300):
@@ -77,17 +81,20 @@ def create_vlan_lab(request: VlanLabRequest, current_user: dict = Depends(get_cu
                         )
                         created_vms.append({"name": new_clone_name, "id": next_vmid})
                         clone_index += 1
-            
-            return {"message": "Lab created successfully.", "vnet": new_vnet_name, "created_vms": created_vms}
+            logger.info(f"Vlan Lab created successfully. Vnet: {new_vnet_name} Created VMs: {created_vms}")
+            return {"message": "Vlan Lab created successfully.", "vnet": new_vnet_name, "created_vms": created_vms}
 
     except Timeout:
+        logger.error(f"Another lab creation is already in progress. Please try again in a few moments.")
         raise HTTPException(status_code=503, detail="Another lab creation is already in progress. Please try again in a few moments.")
     except Exception as e:
+        logger.error(f"Error creating Vlan Lab: {save_error(e)}.")
         raise HTTPException(status_code=500, detail="An error occurred: {}".format(e))
 
 
 @router.delete("/labs/{lab_group_name}", tags=["Labs"])
 def delete_lab(lab_group_name: str, current_user: dict = Depends(get_current_active_user)):
+    logger.info(f"User '{current_user.username}' requested to delete vlan lab.")
     """
     Deletes all VMs in a lab group, and then deletes the VNET they are connected to.
     """
@@ -138,6 +145,7 @@ def delete_lab(lab_group_name: str, current_user: dict = Depends(get_current_act
                         time.sleep(3)
                         if vm.status.current.get()['status'] == 'stopped': break
                     else:
+                        logger.error(f"Timed out waiting for VM {vmid} to stop.")
                         raise Exception("Timed out waiting for VM {} to stop.".format(vmid))
                 
                 vm.delete()
@@ -149,16 +157,19 @@ def delete_lab(lab_group_name: str, current_user: dict = Depends(get_current_act
                 proxmox.cluster.sdn.vnets(vnet_to_delete).delete()
                 time.sleep(2)
                 proxmox.cluster.sdn.put()
-
+            logger.info(f"Successfully deleted lab '{lab_group_name}' and VNET '{vnet_to_delete}'. Deleted VMs: {deleted_vms}")
             return {"message": "Successfully deleted lab '{}' and VNET '{}'.".format(lab_group_name, vnet_to_delete), "deleted_vms": deleted_vms}
 
     except Timeout:
+        logger.error(f"Another lab deletion is already in progress. Please try again.")
         raise HTTPException(status_code=503, detail="Another lab deletion is already in progress. Please try again.")
     except Exception as e:
+        logger.error(f"An error occurred during lab deletion: {save_error(e)}.")
         raise HTTPException(status_code=500, detail="An error occurred during lab deletion: {}".format(e))
         
 @router.post("/labs/{lab_group_name}/start", tags=["Labs"])
 def start_lab(lab_group_name: str, current_user: dict = Depends(get_current_active_user)):
+    logger.info(f"User '{current_user.username}' requested to start vlan lab {lab_group_name}.")
     """
     Starts all VMs that belong to a specific lab group instance.
     """
@@ -186,13 +197,15 @@ def start_lab(lab_group_name: str, current_user: dict = Depends(get_current_acti
                         if vm_summary.get('status') == 'stopped':
                             proxmox.nodes(node_name).qemu(vmid).status.start.post()
                             started_vms.append(vm_summary.get('name'))
-        
+        logger.info(f"Start command sent to all VMs in lab '{lab_group_name}'. Started VMs: {started_vms}")
         return {"message": "Start command sent to all VMs in lab '{}'.".format(lab_group_name), "started_vms": started_vms}
     except Exception as e:
+        logger.error(f"An error occurred while starting the lab: {save_error(e)}")
         raise HTTPException(status_code=500, detail="An error occurred while starting the lab: {}".format(e))
         
 @router.post("/labs/{lab_group_name}/stop", tags=["Labs"])
 def stop_lab(lab_group_name: str, current_user: dict = Depends(get_current_active_user)):
+    logger.info(f"User '{current_user.username}' requested to stop vlan lab {lab_group_name}.")
     """
     Stops all VMs that belong to a specific lab group instance.
     """
@@ -219,7 +232,8 @@ def stop_lab(lab_group_name: str, current_user: dict = Depends(get_current_activ
                         if vm_summary.get('status') == 'running':
                             proxmox.nodes(node_name).qemu(vmid).status.stop.post()
                             stopped_vms.append(vm_summary.get('name'))
-        
+        logger.info(f"Stop command sent to all VMs in lab '{lab_group_name}'. Started VMs: {stopped_vms}")
         return {"message": "Stop command sent to all VMs in lab '{}'.".format(lab_group_name), "stopped_vms": stopped_vms}
     except Exception as e:
+        logger.error(f"An error occurred while stopping the lab: {save_error(e)}.")
         raise HTTPException(status_code=500, detail="An error occurred while stopping the lab: {}".format(e))
