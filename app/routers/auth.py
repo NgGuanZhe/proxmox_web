@@ -1,5 +1,7 @@
 import re
 import uuid
+import logging
+from app.logging_helper import save_error
 from datetime import datetime, timedelta, timezone
 from typing import Union, List
 from typing_extensions import Annotated
@@ -21,6 +23,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # --- Setup ---
+logger = logging.getLogger("proxmox_api")
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/token")
@@ -133,7 +136,9 @@ async def login_for_access_token(
     db: Session = Depends(get_db)
 ):
     user = authenticate_user(db, form_data.username, form_data.password)
+    logger.info(f"'{form_data.username}' requested for login access token.")
     if not user:
+        logger.error(f"Incorrect username or password for login")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -145,6 +150,7 @@ async def login_for_access_token(
     )
     user.active_token_jti = jti
     db.commit()
+    logger.info(f"Successful login!")
     return {"access_token": access_token, "token_type": "bearer"}
 
 # --- NEW REGISTRATION ENDPOINT ---
@@ -152,6 +158,7 @@ async def login_for_access_token(
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = get_user(db, username=user.username)
     if db_user:
+        logger.error(f"Username already registered")
         raise HTTPException(status_code=400, detail="Username already registered")
     
     # Explicitly convert the password to a string before hashing
@@ -163,19 +170,24 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+    logger.info(f"New User '{user.username}' Registered!")
     return db_user
     
 @router.delete("/users/{user_id}", tags=["Authentication"])
 def delete_user(user_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_admin_user)):
+    logger.info(f"Admin '{current_user.username}' requesting to delete user '{user_id}'")
     """Deletes a user. Admin only."""
     user_to_delete = db.query(models.User).filter(models.User.id == user_id).first()
     if not user_to_delete:
+        logger.error(f"User not found")
         raise HTTPException(status_code=404, detail="User not found")
     if user_to_delete.id == current_user.id:
+        logger.error(f"Admins cannot delete themselves.")
         raise HTTPException(status_code=400, detail="Admins cannot delete themselves.")
     
     db.delete(user_to_delete)
     db.commit()
+    logger.info(f"User '{user_id}' deleted successfully by admin '{current_user.username}'.")
     return {"message": "User deleted successfully."}
     
 @router.get("/users/me", response_model=User, tags=["Authentication"])
@@ -186,8 +198,10 @@ async def read_users_me(
     
 @router.get("/users/", response_model=List[User], tags=["Authentication"])
 def list_users(db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
+    logger.info(f"{current_user.username} is requesting to list all user account")
     """
     Retrieves a list of all users.
     """
     users = db.query(models.User).all()
+    logger.info(f"Successfully listed all user account.")
     return users

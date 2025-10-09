@@ -22,3 +22,6 @@ Thumbs.db
 sql_app.db
 *.sqlite
 *.sqlite3
+
+#log_file
+log_error

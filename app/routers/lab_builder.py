@@ -1,5 +1,7 @@
 import re
 import time
+import logging
+from app.logging_helper import save_error
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import List
@@ -7,6 +9,7 @@ from app.core.proxmox import get_proxmox_connection
 from .vms import _find_vm_node_by_id
 from app.routers.auth import get_current_active_user
 
+logger = logging.getLogger("proxmox_api")
 router = APIRouter()
 
 class TemplateTagRequest(BaseModel):
@@ -38,25 +41,31 @@ def _build_description_with_tags(existing_desc: str, lab_groups: List[str]) -> s
 
 @router.put("/templates/{vmid}/tag", tags=["Lab Builder"])
 def tag_template(vmid: int, request: TemplateTagRequest, current_user: dict = Depends(get_current_active_user)):
+    logger.info(f"User '{current_user.username}' requested to tag templates.")
     proxmox = get_proxmox_connection()
     try:
         node_name = _find_vm_node_by_id(proxmox, vmid)
         if not node_name:
+            logger.error("Template not found.")
             raise HTTPException(status_code=404, detail="Template not found.")
         current_config = proxmox.nodes(node_name).qemu(vmid).config.get()
         existing_desc = current_config.get('description', '')
         new_description = _build_description_with_tags(existing_desc, request.lab_groups)
         proxmox.nodes(node_name).qemu(vmid).config.put(description=new_description)
+        logger.info(f"Template tags updated successfully.")
         return {"message": "Template tags updated successfully."}
     except Exception as e:
+        logger.error(f"Error tagging template: {save_error(e)}.")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/labs/instantiate", tags=["Lab Builder"])
 def instantiate_lab(request: LabInstantiateRequest, current_user: dict = Depends(get_current_active_user)):
+    logger.info(f"User '{current_user.username}' requested to launch/instantiate lab.")
     proxmox = get_proxmox_connection()
     try:
         nodes = proxmox.nodes.get()
         if not nodes:
+            logger.error(f"No Proxmox nodes found.")
             raise HTTPException(status_code=500, detail="No Proxmox nodes found.")
 
         # 1. Create the new VNET
@@ -74,7 +83,9 @@ def instantiate_lab(request: LabInstantiateRequest, current_user: dict = Depends
             proxmox.cluster.sdn.vnets.post(vnet=new_vnet_name, zone=request.vlan_zone, tag=request.vlan_tag)
             time.sleep(2)
             proxmox.cluster.sdn.put()
+            logger.info(f"New SDN Vnet '{new_vnet_name}' Created.")
         except Exception as vnet_error:
+            logger.error(f"Failed to create SDN VNET (Normally is vnet tag alr exist): {save_error(vnet_error)}")
             raise Exception("Failed to create SDN VNET. Proxmox Error: {}".format(vnet_error))
         
         # 2. Find templates and calculate next VMID
@@ -133,8 +144,11 @@ def instantiate_lab(request: LabInstantiateRequest, current_user: dict = Depends
 
         if not created_vms:
             proxmox.cluster.sdn.vnets(new_vnet_name).delete()
+            proxmox.cluster.sdn.put()
+            logging.error(f"No templates found in lab group '{request.lab_group}'. Deleting newly created Vnet {new_vnet_name}.")
             raise HTTPException(status_code=404, detail="No templates found in lab group '{}'.".format(request.lab_group))
-
+        logging.info(f"Lab '{request.lab_group}' instance {next_instance_num} instantiated successfully on VNET '{new_vnet_name}'. Created VMs: {created_vms}")
         return {"message": "Lab '{}' instance {} instantiated successfully on VNET '{}'.".format(request.lab_group, next_instance_num, new_vnet_name), "created_vms": created_vms}
     except Exception as e:
+        logging.error(f"An error occurred: {save_error(e)}.")
         raise HTTPException(status_code=500, detail="An error occurred: {}".format(e))
