@@ -8,6 +8,7 @@ from app.core.proxmox import get_proxmox_connection
 from .vms import _find_vm_node_by_id
 from app.routers.auth import get_current_active_user
 from filelock import FileLock, Timeout
+from typing import List
 
 logger = logging.getLogger("proxmox_api")
 router = APIRouter()
@@ -17,6 +18,104 @@ deletion_lock = FileLock("/tmp/lab_deletion.lock")
 class VlanLabRequest(BaseModel):
     zone: str
     tag: int
+
+class LabMemberUpdateRequest(BaseModel):
+    vm_ids: List[int]
+
+def _clear_lab_description(existing_desc: str) -> str:
+    """Removes any 'Lab: ...' line from a description."""
+    return re.sub(r"Lab: .*? \| Instance: \d+\n?", "", existing_desc).strip()
+
+@router.put("/labs/{lab_group_name}/members", tags=["Labs"])
+def update_lab_members(lab_group_name: str, request: LabMemberUpdateRequest, current_user: dict = Depends(get_current_active_user)):
+    logger.info(f"User '{current_user}' is requesting to edit Lab '{lab_group_name}'.")
+    """
+    Updates the list of VMs in a lab group.
+    Adds specified VMs and removes any not in the list.
+    """
+    proxmox = get_proxmox_connection()
+    try:
+        # Extract lab name and instance number from the group name
+        match = re.match(r"(.*?)_cloned(\d+)", lab_group_name)
+        if not match:
+            logger.error(f"Invalid lab group name format.")
+            raise HTTPException(status_code=400, detail="Invalid lab group name format.")
+        lab_name, instance_num = match.groups()
+        instance_num = int(instance_num)
+
+        # 1. Get all VMs to find the VNET
+        vnet_name = None
+        current_vms_in_group = []
+        all_vms = []
+        nodes = proxmox.nodes.get()
+        for node in nodes:
+            node_name = node['node']
+            for vm_summary in proxmox.nodes(node_name).qemu.get():
+                all_vms.append({**vm_summary, 'node': node_name})
+
+        for vm_summary in all_vms:
+            config = proxmox.nodes(vm_summary['node']).qemu(vm_summary['vmid']).config.get()
+            desc = config.get('description', '')
+            desc_match = re.search(r"Lab: (.*?) \| Instance: (\d+)", desc)
+            if desc_match:
+                lab_name_from_desc = desc_match.group(1).replace(' clone', '').replace(' added', '')
+                instance_num_from_desc = desc_match.group(2)
+                reconstructed_group_name = f"{lab_name_from_desc}_cloned{instance_num_from_desc}"
+                
+                if reconstructed_group_name == lab_group_name:
+                    current_vms_in_group.append(vm_summary['vmid'])
+                    if not vnet_name:
+                        net0 = config.get('net0', '')
+                        if 'bridge=' in net0:
+                            vnet_name = net0.split('bridge=')[1].split(',')[0]
+        
+        if not vnet_name:
+             logger.error(f"Could not determine the VNET for lab group {lab_group_name}.")
+             raise HTTPException(status_code=404, detail=f"Could not determine the VNET for lab group {lab_group_name}.")
+
+        # 2. Determine which VMs to add and remove
+        current_vm_set = set(current_vms_in_group)
+        requested_vm_set = set(request.vm_ids)
+        
+        vms_to_add = requested_vm_set - current_vm_set
+        vms_to_remove = current_vm_set - requested_vm_set
+        
+        # 3. Add new VMs to the group
+        for vmid in vms_to_add:
+            node_name = _find_vm_node_by_id(proxmox, vmid)
+            if node_name:
+                vm = proxmox.nodes(node_name).qemu(vmid)
+                current_config = vm.config.get()
+                current_desc = current_config.get('description', '')
+                
+                # Set description to 'added'
+                new_desc = f"{_clear_lab_description(current_desc)}\nLab: {lab_name} added | Instance: {instance_num}".strip()
+                
+                # Reconfigure network
+                net0_config_str = current_config.get('net0', '')
+                new_net_config = ""
+                if net0_config_str:
+                    model_and_mac = net0_config_str.split(',')[0]
+                    new_net_config = f"{model_and_mac},bridge={vnet_name}"
+                    vm.config.put(description=new_desc, net0=new_net_config)
+                else:
+                    vm.config.put(description=new_desc)
+
+        # 4. Remove VMs from the group
+        for vmid in vms_to_remove:
+            node_name = _find_vm_node_by_id(proxmox, vmid)
+            if node_name:
+                vm = proxmox.nodes(node_name).qemu(vmid)
+                current_desc = vm.config.get().get('description', '')
+                new_desc = _clear_lab_description(current_desc)
+                vm.config.put(description=new_desc)
+        logger.info(f"Successfully updated members for lab {lab_group_name}.")
+        return {"message": f"Successfully updated members for lab {lab_group_name}."}
+
+    except Exception as e:
+        logger.error(f"Error updating lab members for {lab_group_name}: {save_error(e)}.")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.post("/labs/create_vlan_lab", tags=["Labs"])
 def create_vlan_lab(request: VlanLabRequest, current_user: dict = Depends(get_current_active_user)):
@@ -120,7 +219,7 @@ def delete_lab(lab_group_name: str, current_user: dict = Depends(get_current_act
                     match = re.search(r"Lab: (.*?) \| Instance: (\d+)", desc)
 
                     if match:
-                        lab_name = match.group(1)
+                        lab_name = match.group(1).replace(' clone', '').replace(' added', '')
                         instance_num = match.group(2)
                         current_group_name = "{}_cloned{}".format(lab_name, instance_num)
 
@@ -188,7 +287,7 @@ def start_lab(lab_group_name: str, current_user: dict = Depends(get_current_acti
                 match = re.search(r"Lab: (.*?) \| Instance: (\d+)", desc)
 
                 if match:
-                    lab_name = match.group(1)
+                    lab_name = match.group(1).replace(' clone', '').replace(' added', '')
                     instance_num = match.group(2)
                     current_group_name = "{}_cloned{}".format(lab_name, instance_num)
 
@@ -224,7 +323,7 @@ def stop_lab(lab_group_name: str, current_user: dict = Depends(get_current_activ
                 match = re.search(r"Lab: (.*?) \| Instance: (\d+)", desc)
 
                 if match:
-                    lab_name = match.group(1)
+                    lab_name = match.group(1).replace(' clone', '').replace(' added', '')
                     instance_num = match.group(2)
                     current_group_name = "{}_cloned{}".format(lab_name, instance_num)
 
@@ -237,3 +336,5 @@ def stop_lab(lab_group_name: str, current_user: dict = Depends(get_current_activ
     except Exception as e:
         logger.error(f"An error occurred while stopping the lab: {save_error(e)}.")
         raise HTTPException(status_code=500, detail="An error occurred while stopping the lab: {}".format(e))
+
+
