@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import { api } from '@/services/apiService'; // <-- Import the new service
+import { api } from '@/services/apiService'; 
 
-const templates = ref([]);
+const allVms = ref([]);
 const isLoading = ref(true);
 const error = ref(null);
 const newLabGroupName = ref('');
@@ -19,25 +19,40 @@ const labGroups = computed(() => {
   if (newLabGroupName.value.trim()) {
     allGroups.add(newLabGroupName.value.trim());
   }
-  templates.value.forEach(template => {
-    const tags = parseTagsFromDescription(template.hardware_details.description);
+  allVms.value.forEach(vm => {
+    const tags = parseTagsFromDescription(vm.hardware_details.description);
     tags.forEach(tag => allGroups.add(tag));
   });
   return Array.from(allGroups).sort();
 });
 
-const templatesInGroup = computed(() => {
+const vmsInGroup = computed(() => {
   if (!selectedLabGroup.value) return [];
-  return templates.value.filter(t => 
-    parseTagsFromDescription(t.hardware_details.description).includes(selectedLabGroup.value)
+  return allVms.value.filter(vm => 
+    parseTagsFromDescription(vm.hardware_details.description).includes(selectedLabGroup.value)
   );
 });
-const templatesNotInGroup = computed(() => {
-  if (!selectedLabGroup.value) return [];
-  return templates.value.filter(t => 
-    !parseTagsFromDescription(t.hardware_details.description).includes(selectedLabGroup.value)
-  );
+
+const vmsNotInGroup = computed(() => {
+    if (!selectedLabGroup.value) return [];
+    return allVms.value.filter(vm => {
+        const description = vm.hardware_details?.description || '';
+        const tags = parseTagsFromDescription(description);
+
+        // A VM is NOT in the group if it doesn't have the selected lab group tag.
+        const isNotInCurrentGroup = !tags.includes(selectedLabGroup.value);
+
+        // Additionally, for non-templates, it should not be part of any other active lab instance.
+        if (!vm.hardware_details?.template) {
+            const isInAnotherLab = /Lab:.*?\| Instance:/.test(description);
+            return isNotInCurrentGroup && !isInAnotherLab;
+        }
+
+        // For templates, just check if it's not in the current group.
+        return isNotInCurrentGroup;
+    });
 });
+
 
 onMounted(async () => {
   await fetchInitialData();
@@ -52,12 +67,12 @@ async function fetchInitialData() {
   isLoading.value = true;
   error.value = null;
   try {
-    const [allVms, allZones] = await Promise.all([
+    const [fetchedVms, allZones] = await Promise.all([
       api.get('/vms'),
       api.get('/sdn/zones')
     ]);
     
-    templates.value = allVms.filter(vm => vm.hardware_details?.template === 1);
+    allVms.value = fetchedVms;
     allSdnZones.value = allZones.filter(z => z.type === 'vlan');
 
   } catch (e) {
@@ -67,28 +82,30 @@ async function fetchInitialData() {
   }
 }
 
-async function updateTemplateTags(template, newTags) {
+async function updateVmTags(vm, newTags) {
   try {
-    await api.put(`/templates/${template.proxmox_id}/tag`, { lab_groups: newTags });
-    await fetchInitialData();
+    const endpoint = vm.hardware_details.template ? `/templates/${vm.proxmox_id}/tag` : `/vms/${vm.proxmox_id}/tag`;
+    await api.put(endpoint, { lab_groups: newTags });
+    await fetchInitialData(); // Refresh data after update
   } catch (e) {
     error.value = e.message;
   }
 }
 
-function addTemplateToGroup(template) {
+
+function addVmToGroup(vm) {
   if (!selectedLabGroup.value) return;
-  const currentTags = parseTagsFromDescription(template.hardware_details.description);
+  const currentTags = parseTagsFromDescription(vm.hardware_details.description);
   if (!currentTags.includes(selectedLabGroup.value)) {
-    updateTemplateTags(template, [...currentTags, selectedLabGroup.value]);
+    updateVmTags(vm, [...currentTags, selectedLabGroup.value]);
   }
 }
 
-function removeTemplateFromGroup(template) {
+function removeVmFromGroup(vm) {
   if (!selectedLabGroup.value) return;
-  const currentTags = parseTagsFromDescription(template.hardware_details.description);
+  const currentTags = parseTagsFromDescription(vm.hardware_details.description);
   const newTags = currentTags.filter(tag => tag !== selectedLabGroup.value);
-  updateTemplateTags(template, newTags);
+  updateVmTags(vm, newTags);
 }
 
 async function instantiateLab() {
@@ -159,23 +176,23 @@ async function instantiateLab() {
 
           <div class="assignment-layout">
             <div class="vm-column">
-              <h4>Templates in this Lab</h4>
+              <h4>VMs in this Lab</h4>
               <ul class="vm-list-box">
-                <li v-for="vm in templatesInGroup" :key="vm.proxmox_id">
-                  <span>{{ vm.name }}</span>
-                  <button @click="removeTemplateFromGroup(vm)" class="remove-button">Remove</button>
+                <li v-for="vm in vmsInGroup" :key="vm.proxmox_id">
+                  <span>{{ vm.name }} <span v-if="vm.hardware_details.template" class="template-badge">Template</span></span>
+                  <button @click="removeVmFromGroup(vm)" class="remove-button">Remove</button>
                 </li>
-                 <li v-if="templatesInGroup.length === 0" class="empty-text">No templates assigned.</li>
+                 <li v-if="vmsInGroup.length === 0" class="empty-text">No VMs assigned.</li>
               </ul>
             </div>
             <div class="vm-column">
-              <h4>Available Templates</h4>
+              <h4>Available VMs</h4>
               <ul class="vm-list-box">
-                <li v-for="vm in templatesNotInGroup" :key="vm.proxmox_id">
-                  <span>{{ vm.name }}</span>
-                  <button @click="addTemplateToGroup(vm)" class="add-button">Add</button>
+                <li v-for="vm in vmsNotInGroup" :key="vm.proxmox_id">
+                   <span>{{ vm.name }} <span v-if="vm.hardware_details.template" class="template-badge">Template</span></span>
+                  <button @click="addVmToGroup(vm)" class="add-button">Add</button>
                 </li>
-                <li v-if="templatesNotInGroup.length === 0" class="empty-text">No available templates.</li>
+                <li v-if="vmsNotInGroup.length === 0" class="empty-text">No available VMs.</li>
               </ul>
             </div>
           </div>
@@ -235,4 +252,13 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
 .status-box { padding: 1rem; margin-top: 1.5rem; border-radius: 5px; text-align: left; }
 .status-box.success { background-color: #e8f5e9; color: #2e7d32; }
 .empty-text { color: var(--text-muted); font-style: italic; }
+.template-badge {
+  background-color: #ffc107;
+  color: #1a1a1a;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: bold;
+  margin-left: 8px;
+}
 </style>

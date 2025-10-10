@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from app.core.proxmox import get_proxmox_connection
 from app.routers.auth import get_current_active_user # <-- Import the security function
 from filelock import FileLock, Timeout
+from typing import List
 
 logger = logging.getLogger("proxmox_api")
 router = APIRouter()
@@ -27,6 +28,10 @@ class SnapshotRequest(BaseModel):
 
 class LabCreateRequest(BaseModel):
     lab_name: str
+
+class TemplateTagRequest(BaseModel):
+    lab_groups: List[str]
+
 # Helper functions (_find_vm_node_by_id, _format_vm_details) are unchanged
 def _find_vm_node_by_id(proxmox_conn, vmid):
     try:
@@ -56,6 +61,14 @@ def _format_vm_details(vm_config):
                     else: nic_details[k] = v
             details["network_interfaces"].append(nic_details)
     return details
+
+def _build_description_with_tags(existing_desc: str, lab_groups: List[str]) -> str:
+    new_desc = re.sub(r"LabGroups:\[.*?\]\n?", "", existing_desc).strip()
+    if lab_groups:
+        tag_str = "LabGroups:[{}]".format(','.join(lab_groups))
+        new_desc = "{}\n{}".format(new_desc, tag_str).strip()
+    return new_desc
+
 
 @router.get("/vms", tags=["Virtual Machines"])
 def list_vms(current_user: dict = Depends(get_current_active_user)): # <-- Security added here
@@ -391,3 +404,21 @@ def create_lab(request: LabCreateRequest, current_user: dict = Depends(get_curre
     except Exception as e:
         logger.error(f"Error when creating lab (not the lab_builder): {save_error(e)}.")
         raise HTTPException(status_code=500, detail="An error occurred: {}".format(e))
+
+@router.put("/vms/{vmid}/tag", tags=["Virtual Machines"])
+def tag_vm(vmid: int, request: TemplateTagRequest, current_user: dict = Depends(get_current_active_user)):
+    logger.info(f"User '{current_user.username}' requested to tag VM {vmid}.")
+    proxmox = get_proxmox_connection()
+    try:
+        node_name = _find_vm_node_by_id(proxmox, vmid)
+        if not node_name:
+            raise HTTPException(status_code=404, detail="VM not found.")
+        current_config = proxmox.nodes(node_name).qemu(vmid).config.get()
+        existing_desc = current_config.get('description', '')
+        new_description = _build_description_with_tags(existing_desc, request.lab_groups)
+        proxmox.nodes(node_name).qemu(vmid).config.put(description=new_description)
+        logger.info(f"VM tags updated successfully.")
+        return {"message": "VM tags updated successfully."}
+    except Exception as e:
+        logger.error(f"Error tagging VM: {save_error(e)}.")
+        raise HTTPException(status_code=500, detail=str(e))

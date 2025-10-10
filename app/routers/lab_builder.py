@@ -33,26 +33,35 @@ def _parse_tags_from_description(description: str) -> dict:
     return tags
 
 def _build_description_with_tags(existing_desc: str, lab_groups: List[str]) -> str:
+    # First, remove any existing LabGroups tag to avoid duplication
     new_desc = re.sub(r"LabGroups:\[.*?\]\n?", "", existing_desc).strip()
+    
+    # If there are new lab groups to add, create and append the tag string
     if lab_groups:
-        tag_str = "LabGroups:[{}]".format(','.join(lab_groups))
+        tag_str = "LabGroups:[{}]".format(','.join(sorted(list(set(lab_groups))))) # Sort and remove duplicates
         new_desc = "{}\n{}".format(new_desc, tag_str).strip()
+        
     return new_desc
 
 @router.put("/templates/{vmid}/tag", tags=["Lab Builder"])
 def tag_template(vmid: int, request: TemplateTagRequest, current_user: dict = Depends(get_current_active_user)):
-    logger.info(f"User '{current_user.username}' requested to tag templates.")
+    logger.info(f"User '{current_user.username}' requested to tag template {vmid}.")
     proxmox = get_proxmox_connection()
     try:
         node_name = _find_vm_node_by_id(proxmox, vmid)
         if not node_name:
-            logger.error("Template not found.")
-            raise HTTPException(status_code=404, detail="Template not found.")
+            logger.error(f"Template with ID {vmid} not found.")
+            raise HTTPException(status_code=404, detail=f"Template with ID {vmid} not found.")
+        
         current_config = proxmox.nodes(node_name).qemu(vmid).config.get()
+        if current_config.get('template') != 1:
+            raise HTTPException(status_code=400, detail=f"VM with ID {vmid} is not a template.")
+
         existing_desc = current_config.get('description', '')
         new_description = _build_description_with_tags(existing_desc, request.lab_groups)
+        
         proxmox.nodes(node_name).qemu(vmid).config.put(description=new_description)
-        logger.info(f"Template tags updated successfully.")
+        logger.info(f"Template {vmid} tags updated successfully.")
         return {"message": "Template tags updated successfully."}
     except Exception as e:
         logger.error(f"Error tagging template: {save_error(e)}.")
@@ -119,26 +128,25 @@ def instantiate_lab(request: LabInstantiateRequest, current_user: dict = Depends
         created_vms = []
         for node in nodes:
             node_name = node['node']
-            for template_summary in proxmox.nodes(node_name).qemu.get():
-                if template_summary.get('template') == 1:
-                    config = proxmox.nodes(node_name).qemu(template_summary['vmid']).config.get()
-                    tags = _parse_tags_from_description(config.get('description', ''))
-                    
-                    if request.lab_group in tags.get('lab_groups', []):
+            for vm_summary in proxmox.nodes(node_name).qemu.get():
+                config = proxmox.nodes(node_name).qemu(vm_summary['vmid']).config.get()
+                tags = _parse_tags_from_description(config.get('description', ''))
+                
+                if request.lab_group in tags.get('lab_groups', []):
+                    # If it's a template, clone it
+                    if vm_summary.get('template') == 1:
                         while next_vmid in existing_ids:
                             next_vmid += 1
                         
-                        template_id = template_summary['vmid']
-                        new_clone_name = "{}-{}-{}".format(request.lab_group.lower(), template_summary.get('name', 'vm'), next_vmid)
+                        template_id = vm_summary['vmid']
+                        new_clone_name = "{}-{}-{}".format(request.lab_group.lower(), vm_summary.get('name', 'vm'), next_vmid)
                         clone_description = "Lab: {} clone | Instance: {}".format(request.lab_group, next_instance_num)
                         
-                        # Step A: Clone the VM
                         proxmox.nodes(node_name).qemu(template_id).clone.post(newid=next_vmid, name=new_clone_name, full=0, description=clone_description)
                         
                         time.sleep(2)
                         new_vm = proxmox.nodes(node_name).qemu(next_vmid)
                         
-                        # Step B: Reconfigure the network
                         template_config = proxmox.nodes(node_name).qemu(template_id).config.get()
                         net0_config = template_config.get('net0', '')
                         if net0_config:
@@ -148,16 +156,34 @@ def instantiate_lab(request: LabInstantiateRequest, current_user: dict = Depends
 
                         created_vms.append({"name": new_clone_name, "id": next_vmid})
                         next_vmid += 1
+                    # If it's a regular VM, "consume" it if not busy
+                    else:
+                        desc = config.get('description', '')
+                        if "Lab:" not in desc and "Instance:" not in desc:
+                            vm_id = vm_summary['vmid']
+                            vm_node = _find_vm_node_by_id(proxmox, vm_id)
+                            if vm_node:
+                                vm = proxmox.nodes(vm_node).qemu(vm_id)
+                                new_description = "{}\nLab: {} | Instance: {}".format(desc, request.lab_group, next_instance_num).strip()
+                                
+                                net0_config = config.get('net0', '')
+                                if net0_config:
+                                    model_and_mac = net0_config.split(',')[0]
+                                    new_net_config_str = "{},bridge={}".format(model_and_mac, new_vnet_name)
+                                    vm.config.put(description=new_description, net0=new_net_config_str)
+                                else:
+                                    vm.config.put(description=new_description)
+                                
+                                created_vms.append({"name": vm_summary.get('name'), "id": vm_id})
+
 
         if not created_vms:
             proxmox.cluster.sdn.vnets(new_vnet_name).delete()
             proxmox.cluster.sdn.put()
-            logger.error(f"No templates found in lab group '{request.lab_group}'. Deleting newly created Vnet {new_vnet_name}.")
-            raise HTTPException(status_code=404, detail="No templates found in lab group '{}'.".format(request.lab_group))
+            logger.error(f"No available templates or VMs found in lab group '{request.lab_group}'. Deleting newly created Vnet {new_vnet_name}.")
+            raise HTTPException(status_code=404, detail="No available templates or VMs found in lab group '{}'.".format(request.lab_group))
         logger.info(f"Lab '{request.lab_group}' instance {next_instance_num} instantiated successfully on VNET '{new_vnet_name}'. Created VMs: {created_vms}")
         return {"message": "Lab '{}' instance {} instantiated successfully on VNET '{}'.".format(request.lab_group, next_instance_num, new_vnet_name), "created_vms": created_vms}
     except Exception as e:
         logger.error(f"An error occurred: {save_error(e)}.")
         raise HTTPException(status_code=500, detail="An error occurred: {}".format(e))
-
-
