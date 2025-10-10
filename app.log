@@ -1,0 +1,659 @@
+[32mINFO[0m:     | 2025-10-09 19:39:43 | 'gz' requested for login access token.
+[32mINFO[0m:     | 2025-10-09 19:39:43 | Successful login!
+[32mINFO[0m:     | 2025-10-09 19:39:44 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:39:45 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-09 19:39:45 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:39:45 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 19:39:45 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 19:39:46 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-09 19:39:51 | User 'gz' requested to launch/instantiate lab.
+[32mINFO[0m:     | 2025-10-09 19:39:53 | New SDN Vnet 'vnet1' Created.
+[32mINFO[0m:     | 2025-10-09 19:39:57 | Lab 'etst1' instance 1 instantiated successfully on VNET 'vnet1'. Created VMs: [{'name': 'etst1-paopa-1001', 'id': 1001}, {'name': 'etst1-ubutnapa-1002', 'id': 1002}]
+[32mINFO[0m:     | 2025-10-09 19:39:59 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:39:59 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 19:40:00 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:40:00 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 19:40:06 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:40:06 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 19:40:12 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:40:12 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 19:40:33 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:40:33 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 19:42:40 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:42:40 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 19:47:37 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:47:37 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 19:47:37 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 19:47:37 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 19:47:40 | User 'gz' requested to launch/instantiate lab.
+[32mINFO[0m:     | 2025-10-09 19:47:42 | New SDN Vnet 'vnet2' Created.
+[32mINFO[0m:     | 2025-10-09 19:47:46 | Lab 'etst1' instance 2 instantiated successfully on VNET 'vnet2'. Created VMs: [{'name': 'etst1-paopa-2001', 'id': 2001}, {'name': 'etst1-ubutnapa-2002', 'id': 2002}]
+[32mINFO[0m:     | 2025-10-09 19:47:49 | gz is requesting to list all user account
+[32mINFO[0m:     | 2025-10-09 19:47:49 | Successfully listed all user account.
+[32mINFO[0m:     | 2025-10-09 19:47:50 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:47:50 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:48:44 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:48:44 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:49:06 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:49:06 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:49:10 | gz is requesting to list all user account
+[32mINFO[0m:     | 2025-10-09 19:49:10 | Successfully listed all user account.
+[32mINFO[0m:     | 2025-10-09 19:49:11 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:49:11 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:49:15 | gz is requesting to list all user account
+[32mINFO[0m:     | 2025-10-09 19:49:15 | Successfully listed all user account.
+[32mINFO[0m:     | 2025-10-09 19:49:15 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:49:15 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:50:59 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:50:59 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:51:02 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:51:02 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 19:51:02 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 19:51:02 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:51:02 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:51:02 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:51:05 | User 'gz' requested to start vlan lab etst1_cloned1.
+[32mINFO[0m:     | 2025-10-09 19:51:05 | Start command sent to all VMs in lab 'etst1_cloned1'. Started VMs: ['etst1-paopa-1001', 'etst1-ubutnapa-1002']
+[32mINFO[0m:     | 2025-10-09 19:51:08 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:51:08 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:51:22 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:51:22 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:51:29 | gz is requesting to list all user account
+[32mINFO[0m:     | 2025-10-09 19:51:29 | Successfully listed all user account.
+[32mINFO[0m:     | 2025-10-09 19:51:30 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:51:30 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:51:44 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:51:44 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:51:49 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:51:49 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:51:54 | User 'gz' requested to list snapshot for VM 2002
+[32mINFO[0m:     | 2025-10-09 19:51:54 | Succesfully retrieved snapshot for VM 2002
+[32mINFO[0m:     | 2025-10-09 19:51:54 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 19:51:54 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 19:52:05 | User 'gz' requested to stop vlan lab etst1_cloned1.
+[32mINFO[0m:     | 2025-10-09 19:52:05 | Stop command sent to all VMs in lab 'etst1_cloned1'. Started VMs: ['etst1-paopa-1001', 'etst1-ubutnapa-1002']
+[32mINFO[0m:     | 2025-10-09 19:52:08 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:52:08 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:52:28 | User 'gz' requested to list snapshot for VM 2002
+[32mINFO[0m:     | 2025-10-09 19:52:28 | Succesfully retrieved snapshot for VM 2002
+[32mINFO[0m:     | 2025-10-09 19:52:28 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 19:52:28 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 19:53:27 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:53:27 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 19:53:27 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 19:53:27 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:53:28 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:53:28 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:53:32 | User 'gz' requested to start vlan lab etst1_cloned2.
+[32mINFO[0m:     | 2025-10-09 19:53:33 | Start command sent to all VMs in lab 'etst1_cloned2'. Started VMs: ['etst1-paopa-2001', 'etst1-ubutnapa-2002']
+[32mINFO[0m:     | 2025-10-09 19:53:36 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:53:36 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:53:37 | User 'gz' requested to stop vlan lab etst1_cloned2.
+[32mINFO[0m:     | 2025-10-09 19:53:37 | Stop command sent to all VMs in lab 'etst1_cloned2'. Started VMs: ['etst1-paopa-2001', 'etst1-ubutnapa-2002']
+[32mINFO[0m:     | 2025-10-09 19:53:40 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:53:40 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:53:42 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:53:42 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:53:42 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 19:53:42 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 19:53:44 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:53:44 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:56:18 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 19:56:18 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 19:56:19 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 19:56:19 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 19:56:19 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 19:56:19 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-09 19:56:22 | gz is requesting to list all user account
+[32mINFO[0m:     | 2025-10-09 19:56:22 | Successfully listed all user account.
+[32mINFO[0m:     | 2025-10-09 19:56:22 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:56:22 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:56:24 | User 'gz' requested to list snapshot for VM 1002
+[32mINFO[0m:     | 2025-10-09 19:56:24 | Succesfully retrieved snapshot for VM 1002
+[32mINFO[0m:     | 2025-10-09 19:56:24 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 19:56:24 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 19:56:30 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:56:30 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:56:31 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 19:56:31 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 19:56:31 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 19:56:31 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-09 19:56:35 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:56:35 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:56:37 | User 'gz' requested to list snapshot for VM 2001
+[32mINFO[0m:     | 2025-10-09 19:56:37 | Succesfully retrieved snapshot for VM 2001
+[32mINFO[0m:     | 2025-10-09 19:56:37 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 19:56:37 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 19:56:42 | User 'gz' requested to list snapshot for VM 1002
+[32mINFO[0m:     | 2025-10-09 19:56:42 | Succesfully retrieved snapshot for VM 1002
+[32mINFO[0m:     | 2025-10-09 19:56:42 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 19:56:42 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 19:57:08 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:57:09 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:57:10 | User 'gz' requested to list snapshot for VM 2001
+[32mINFO[0m:     | 2025-10-09 19:57:10 | Succesfully retrieved snapshot for VM 2001
+[32mINFO[0m:     | 2025-10-09 19:57:10 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 19:57:10 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 19:57:15 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:57:15 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:57:16 | User 'gz' requested to list snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 19:57:16 | Succesfully retrieved snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 19:57:16 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 19:57:16 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 19:57:20 | User 'gz' requested to list snapshot for VM 2001
+[32mINFO[0m:     | 2025-10-09 19:57:20 | Succesfully retrieved snapshot for VM 2001
+[32mINFO[0m:     | 2025-10-09 19:57:20 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 19:57:20 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 19:57:24 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:57:24 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:57:25 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 19:57:25 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 19:57:29 | User 'gz' requested to create a networks bridge.
+[32mINFO[0m:     | 2025-10-09 19:57:30 | Successfully created and applied bridge hoho on node pve.
+[32mINFO[0m:     | 2025-10-09 19:57:31 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 19:57:31 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 19:57:32 | gz is requesting to list all user account
+[32mINFO[0m:     | 2025-10-09 19:57:32 | Successfully listed all user account.
+[32mINFO[0m:     | 2025-10-09 19:57:33 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 19:57:33 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 19:57:35 | User 'gz' requested to list snapshot for VM 1002
+[32mINFO[0m:     | 2025-10-09 19:57:35 | Succesfully retrieved snapshot for VM 1002
+[32mINFO[0m:     | 2025-10-09 19:57:35 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 19:57:35 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 20:01:33 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:01:33 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:05:37 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:05:38 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:05:45 | User 'gz' requested to update VMs in Vlan lab 'etst1_cloned1'.
+[32mINFO[0m:     | 2025-10-09 20:05:45 | Added VM 101 to lab group 'etst1_cloned1' and set network to 'vnet1'.
+[32mINFO[0m:     | 2025-10-09 20:05:45 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:05:45 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:05:49 | User 'gz' requested to list snapshot for VM 1002
+[32mINFO[0m:     | 2025-10-09 20:05:49 | Succesfully retrieved snapshot for VM 1002
+[32mINFO[0m:     | 2025-10-09 20:05:49 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 20:05:49 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 20:05:50 | User 'gz' requested to list snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 20:05:50 | Succesfully retrieved snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 20:05:50 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 20:05:50 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 20:07:45 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:07:45 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:07 | User 'gz' requested to update VMs in Vlan lab 'etst1_cloned2'.
+[32mINFO[0m:     | 2025-10-09 20:08:07 | Added VM 101 to lab group 'etst1_cloned2' and set network to 'vnet2'.
+[32mINFO[0m:     | 2025-10-09 20:08:07 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:07 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:14 | User 'gz' requested to list snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 20:08:14 | Succesfully retrieved snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 20:08:14 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 20:08:14 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 20:08:47 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:47 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:49 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:49 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:49 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:49 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:50 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:50 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:51 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:51 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:51 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:51 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:51 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:51 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:52 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:52 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:52 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:52 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:52 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:52 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:52 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:52 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:52 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:52 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:52 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:52 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:53 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:53 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:53 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:08:53 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:18:44 | 'gz' requested for login access token.
+[32mINFO[0m:     | 2025-10-09 20:18:44 | Successful login!
+[32mINFO[0m:     | 2025-10-09 20:18:46 | gz is requesting to list all user account
+[32mINFO[0m:     | 2025-10-09 20:18:46 | Successfully listed all user account.
+[32mINFO[0m:     | 2025-10-09 20:18:47 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:18:47 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:18:50 | User 'gz' requested to start vlan lab etst1_cloned2.
+[32mINFO[0m:     | 2025-10-09 20:18:51 | Start command sent to all VMs in lab 'etst1_cloned2'. Started VMs: ['etst1-paopa-2001', 'etst1-ubutnapa-2002', 'ubuntutest']
+[32mINFO[0m:     | 2025-10-09 20:18:54 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:18:54 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:19:07 | User 'gz' requested to stop vlan lab etst1_cloned2.
+[32mINFO[0m:     | 2025-10-09 20:19:07 | Stop command sent to all VMs in lab 'etst1_cloned2'. Started VMs: ['ubuntutest', 'etst1-paopa-2001', 'etst1-ubutnapa-2002']
+[32mINFO[0m:     | 2025-10-09 20:19:10 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:19:10 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:19:21 | User 'gz' requested to update VMs in Vlan lab 'etst1_cloned2'.
+[32mINFO[0m:     | 2025-10-09 20:19:22 | Removed VM 101 from lab group 'etst1_cloned2'.
+[32mINFO[0m:     | 2025-10-09 20:19:22 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:19:22 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:19:30 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:19:30 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:19:34 | User 'gz' requested to list snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 20:19:34 | Succesfully retrieved snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 20:19:34 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 20:19:34 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 20:19:40 | User 'gz' requested to reconfigure network for VM 101
+[32mINFO[0m:     | 2025-10-09 20:19:40 | Successfully moved VM 101 to bridge vmbr0.
+[32mINFO[0m:     | 2025-10-09 20:21:01 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:21:01 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:21:07 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:21:07 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:21:08 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:21:08 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:21:08 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:21:08 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:23:44 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:23:44 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:23:47 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:23:47 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:23:47 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:23:47 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:23:51 | User 'gz' requested to start vlan lab etst1_cloned2.
+[32mINFO[0m:     | 2025-10-09 20:23:51 | Start command sent to all VMs in lab 'etst1_cloned2'. Started VMs: ['etst1-paopa-2001', 'etst1-ubutnapa-2002']
+[32mINFO[0m:     | 2025-10-09 20:23:54 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:23:54 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 20:23:57 | User 'gz' requested to stop vlan lab etst1_cloned2.
+[32mINFO[0m:     | 2025-10-09 20:23:57 | Stop command sent to all VMs in lab 'etst1_cloned2'. Started VMs: ['etst1-paopa-2001', 'etst1-ubutnapa-2002']
+[32mINFO[0m:     | 2025-10-09 20:24:00 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 20:24:00 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 22:10:43 | 'gz' requested for login access token.
+[31mERROR[0m:    | 2025-10-09 22:10:43 | Incorrect username or password for login
+[32mINFO[0m:     | 2025-10-09 22:10:47 | 'gz' requested for login access token.
+[32mINFO[0m:     | 2025-10-09 22:10:47 | Successful login!
+[32mINFO[0m:     | 2025-10-09 22:10:49 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:10:49 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 22:10:58 | User 'gz' requested to clone all VM templates.
+[32mINFO[0m:     | 2025-10-09 22:10:58 | Cloning process completed successfully. Cloned VMs: [{'template': 'ubutnapa', 'new_id': 2003, 'new_name': 'ubutnapa-clone-2003'}, {'template': 'paopa', 'new_id': 2004, 'new_name': 'paopa-clone-2004'}]
+[32mINFO[0m:     | 2025-10-09 22:11:03 | gz is requesting to list all user account
+[32mINFO[0m:     | 2025-10-09 22:11:03 | Successfully listed all user account.
+[32mINFO[0m:     | 2025-10-09 22:11:03 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:11:03 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:11:17 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:11:17 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:12:08 | User 'gz' requested to clone all VM templates.
+[32mINFO[0m:     | 2025-10-09 22:12:08 | Cloning process completed successfully. Cloned VMs: [{'template': 'ubutnapa', 'new_id': 2005, 'new_name': 'ubutnapa-clone-2005'}, {'template': 'paopa', 'new_id': 2006, 'new_name': 'paopa-clone-2006'}]
+[32mINFO[0m:     | 2025-10-09 22:12:16 | User 'gz' requested to delete all cloned VM templates.
+[32mINFO[0m:     | 2025-10-09 22:12:17 | Cleanup process completed. Deleted VMs: ['paopa-clone-2004', 'paopa-clone-2006', 'ubutnapa-clone-2003', 'ubutnapa-clone-2005']
+[32mINFO[0m:     | 2025-10-09 22:12:21 | User 'gz' requested to clone all VM templates.
+[32mINFO[0m:     | 2025-10-09 22:12:21 | Cloning process completed successfully. Cloned VMs: [{'template': 'paopa', 'new_id': 2003, 'new_name': 'paopa-clone-2003'}, {'template': 'ubutnapa', 'new_id': 2004, 'new_name': 'ubutnapa-clone-2004'}]
+[32mINFO[0m:     | 2025-10-09 22:12:24 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:12:24 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:13:22 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:13:22 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:13:53 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:13:53 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:15:15 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:15:15 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:15:15 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:15:15 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:15:16 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:15:16 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:15:20 | User 'gz' requested to update VMs in Vlan lab 'etst1_cloned1'.
+[32mINFO[0m:     | 2025-10-09 22:15:20 | Added VM 101 to lab group 'etst1_cloned1' and set network to 'vnet1'.
+[32mINFO[0m:     | 2025-10-09 22:15:20 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:15:20 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:24:31 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:24:31 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:24:32 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:24:32 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:24:32 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:24:32 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:24:33 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:24:33 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:24:34 | User 'gz' requested to delete vlan lab.
+[32mINFO[0m:     | 2025-10-09 22:24:43 | Successfully deleted lab 'etst1_cloned1' and VNET 'vnet1'. Deleted VMs: ['etst1-paopa-1001', 'etst1-ubutnapa-1002', 'ubuntutest']
+[32mINFO[0m:     | 2025-10-09 22:24:48 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:24:48 | Successfully retrieved 6 VMs.
+[32mINFO[0m:     | 2025-10-09 22:24:50 | User 'gz' requested to delete vlan lab.
+[32mINFO[0m:     | 2025-10-09 22:24:57 | Successfully deleted lab 'etst1_cloned2' and VNET 'vnet2'. Deleted VMs: ['etst1-ubutnapa-2002', 'etst1-paopa-2001']
+[32mINFO[0m:     | 2025-10-09 22:25:02 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:25:02 | Successfully retrieved 4 VMs.
+[32mINFO[0m:     | 2025-10-09 22:25:20 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:25:20 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:25:20 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:25:20 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 22:25:26 | User 'gz' requested to launch/instantiate lab.
+[32mINFO[0m:     | 2025-10-09 22:25:28 | New SDN Vnet 'vnet1' Created.
+[32mINFO[0m:     | 2025-10-09 22:25:32 | Lab 'etst1' instance 1 instantiated successfully on VNET 'vnet1'. Created VMs: [{'name': 'etst1-paopa-1001', 'id': 1001}, {'name': 'etst1-ubutnapa-1002', 'id': 1002}]
+[32mINFO[0m:     | 2025-10-09 22:25:34 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:25:34 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 22:25:36 | User 'gz' requested to list snapshot for VM 1002
+[32mINFO[0m:     | 2025-10-09 22:25:36 | Succesfully retrieved snapshot for VM 1002
+[32mINFO[0m:     | 2025-10-09 22:25:36 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 22:25:36 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 22:28:23 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:28:23 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 22:28:58 | User 'gz' requested to update VMs in Vlan lab 'etst1_cloned1'.
+[31mERROR[0m:    | 2025-10-09 22:28:58 | Could not determine the VNET for 'etst1_cloned1'. The group must have at least one member to be edited.
+[31mERROR[0m:    | 2025-10-09 22:28:58 | An error occurred while updating lab members: log_error/error_2025-10-09_22-28-58.608648.log.
+[32mINFO[0m:     | 2025-10-09 22:29:07 | User 'gz' requested to list snapshot for VM 1002
+[32mINFO[0m:     | 2025-10-09 22:29:07 | Succesfully retrieved snapshot for VM 1002
+[32mINFO[0m:     | 2025-10-09 22:29:08 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 22:29:08 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 22:29:10 | User 'gz' requested to list snapshot for VM 1001
+[32mINFO[0m:     | 2025-10-09 22:29:10 | Succesfully retrieved snapshot for VM 1001
+[32mINFO[0m:     | 2025-10-09 22:29:10 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 22:29:10 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 22:30:26 | User 'gz' requested to update VMs in Vlan lab 'etst1_cloned1'.
+[31mERROR[0m:    | 2025-10-09 22:30:26 | Could not determine the VNET for 'etst1_cloned1'. The group must have at least one member to be edited.
+[31mERROR[0m:    | 2025-10-09 22:30:26 | An error occurred while updating lab members: log_error/error_2025-10-09_22-30-26.307460.log.
+[32mINFO[0m:     | 2025-10-09 22:30:36 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:30:36 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:30:36 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:30:36 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 22:30:36 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:30:36 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:30:36 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 22:30:36 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-09 22:30:41 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:30:41 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:30:41 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:30:41 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 22:30:42 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:30:42 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 22:30:44 | User 'gz' requested to list snapshot for VM 1001
+[32mINFO[0m:     | 2025-10-09 22:30:44 | Succesfully retrieved snapshot for VM 1001
+[32mINFO[0m:     | 2025-10-09 22:30:44 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 22:30:44 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 22:33:11 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:11 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:13 | User 'gz' requested to list snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 22:33:13 | Succesfully retrieved snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 22:33:13 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 22:33:13 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 22:33:28 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:28 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:33:28 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:33:28 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:34 | User 'gz' requested to launch/instantiate lab.
+[32mINFO[0m:     | 2025-10-09 22:33:36 | New SDN Vnet 'vnet2' Created.
+[32mINFO[0m:     | 2025-10-09 22:33:41 | Lab 'etst1' instance 1 instantiated successfully on VNET 'vnet2'. Created VMs: [{'name': 'etst1-paopa-1003', 'id': 1003}, {'name': 'etst1-ubutnapa-1004', 'id': 1004}]
+[32mINFO[0m:     | 2025-10-09 22:33:42 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:42 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:45 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:45 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:46 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:46 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:46 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:46 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:47 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:33:47 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:33:47 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:47 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:48 | gz is requesting to list all user account
+[32mINFO[0m:     | 2025-10-09 22:33:48 | Successfully listed all user account.
+[32mINFO[0m:     | 2025-10-09 22:33:49 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:49 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:50 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:50 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:55 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:55 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:33:55 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:33:55 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:33:58 | User 'gz' requested to launch/instantiate lab.
+[31mERROR[0m:    | 2025-10-09 22:33:58 | Failed to create SDN VNET (Normally is vnet tag alr exist): log_error/error_2025-10-09_22-33-58.869626.log
+[31mERROR[0m:    | 2025-10-09 22:33:58 | An error occurred: log_error/error_2025-10-09_22-33-58.869975.log.
+[32mINFO[0m:     | 2025-10-09 22:34:01 | User 'gz' requested to launch/instantiate lab.
+[32mINFO[0m:     | 2025-10-09 22:34:03 | New SDN Vnet 'vnet3' Created.
+[32mINFO[0m:     | 2025-10-09 22:34:07 | Lab 'etst1' instance 1 instantiated successfully on VNET 'vnet3'. Created VMs: [{'name': 'etst1-ubutnapa-1005', 'id': 1005}, {'name': 'etst1-paopa-1006', 'id': 1006}]
+[32mINFO[0m:     | 2025-10-09 22:34:11 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:34:11 | Successfully retrieved 11 VMs.
+[32mINFO[0m:     | 2025-10-09 22:34:12 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:34:12 | Successfully retrieved 11 VMs.
+[32mINFO[0m:     | 2025-10-09 22:34:12 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:34:12 | Successfully retrieved 11 VMs.
+[32mINFO[0m:     | 2025-10-09 22:34:13 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:34:13 | Successfully retrieved 11 VMs.
+[32mINFO[0m:     | 2025-10-09 22:34:29 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:34:29 | Successfully retrieved 11 VMs.
+[32mINFO[0m:     | 2025-10-09 22:34:32 | User 'gz' requested to list snapshot for VM 1001
+[32mINFO[0m:     | 2025-10-09 22:34:32 | Succesfully retrieved snapshot for VM 1001
+[32mINFO[0m:     | 2025-10-09 22:34:32 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 22:34:32 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 22:34:34 | User 'gz' requested to list snapshot for VM 1002
+[32mINFO[0m:     | 2025-10-09 22:34:34 | Succesfully retrieved snapshot for VM 1002
+[32mINFO[0m:     | 2025-10-09 22:34:34 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 22:34:34 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 22:34:35 | User 'gz' requested to list snapshot for VM 1006
+[32mINFO[0m:     | 2025-10-09 22:34:35 | Succesfully retrieved snapshot for VM 1006
+[32mINFO[0m:     | 2025-10-09 22:34:35 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 22:34:35 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 22:35:56 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:35:56 | Successfully retrieved 11 VMs.
+[32mINFO[0m:     | 2025-10-09 22:35:58 | User 'gz' requested to delete vlan lab.
+[32mINFO[0m:     | 2025-10-09 22:36:12 | Successfully deleted lab 'etst1_cloned1' and VNET 'vnet3'. Deleted VMs: ['etst1-paopa-1006', 'etst1-ubutnapa-1002', 'etst1-paopa-1001', 'etst1-paopa-1003', 'etst1-ubutnapa-1005', 'etst1-ubutnapa-1004']
+[32mINFO[0m:     | 2025-10-09 22:36:17 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:36:18 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 22:36:19 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:36:19 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:36:19 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:36:19 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 22:36:20 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:36:20 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 22:36:20 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:36:20 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-09 22:36:24 | User 'gz' requested to delete a SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 22:36:26 | Successfully deleted SDN VNET 'vnet1'.
+[32mINFO[0m:     | 2025-10-09 22:36:27 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 22:36:27 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:36:27 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-09 22:36:27 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:36:30 | User 'gz' requested to delete a SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 22:36:32 | Successfully deleted SDN VNET 'vnet2'.
+[32mINFO[0m:     | 2025-10-09 22:37:06 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:37:06 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:37:06 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 22:37:06 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-09 22:37:08 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:37:08 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:37:08 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:37:08 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 22:37:12 | User 'gz' requested to launch/instantiate lab.
+[31mERROR[0m:    | 2025-10-09 22:37:12 | Failed to create SDN VNET (Normally is vnet tag alr exist): log_error/error_2025-10-09_22-37-12.980050.log
+[31mERROR[0m:    | 2025-10-09 22:37:12 | An error occurred: log_error/error_2025-10-09_22-37-12.980397.log.
+[32mINFO[0m:     | 2025-10-09 22:37:16 | User 'gz' requested to launch/instantiate lab.
+[32mINFO[0m:     | 2025-10-09 22:37:18 | New SDN Vnet 'vnet1' Created.
+[32mINFO[0m:     | 2025-10-09 22:37:22 | Lab 'etst1' instance 1 instantiated successfully on VNET 'vnet1'. Created VMs: [{'name': 'etst1-ubutnapa-1001', 'id': 1001}, {'name': 'etst1-paopa-1002', 'id': 1002}]
+[32mINFO[0m:     | 2025-10-09 22:37:29 | User 'gz' requested to launch/instantiate lab.
+[32mINFO[0m:     | 2025-10-09 22:37:31 | New SDN Vnet 'vnet2' Created.
+[32mINFO[0m:     | 2025-10-09 22:37:35 | Lab 'etst1' instance 1 instantiated successfully on VNET 'vnet2'. Created VMs: [{'name': 'etst1-ubutnapa-1003', 'id': 1003}, {'name': 'etst1-paopa-1004', 'id': 1004}]
+[32mINFO[0m:     | 2025-10-09 22:37:38 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:37:38 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:37:45 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:37:46 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:37:48 | User 'gz' requested to delete vlan lab.
+[32mINFO[0m:     | 2025-10-09 22:37:48 | Successfully deleted lab 'etst1_cloned1' and VNET 'None'. Deleted VMs: []
+[32mINFO[0m:     | 2025-10-09 22:37:53 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:37:53 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:37:56 | User 'gz' requested to delete vlan lab.
+[32mINFO[0m:     | 2025-10-09 22:37:56 | Successfully deleted lab 'etst1_cloned1' and VNET 'None'. Deleted VMs: []
+[32mINFO[0m:     | 2025-10-09 22:38:02 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:38:02 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:38:07 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:38:07 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:38:09 | User 'gz' requested to delete vlan lab.
+[32mINFO[0m:     | 2025-10-09 22:38:19 | Successfully deleted lab 'etst1_cloned1' and VNET 'vnet1'. Deleted VMs: ['etst1-paopa-1002', 'etst1-ubutnapa-1001', 'etst1-ubutnapa-1003', 'etst1-paopa-1004']
+[32mINFO[0m:     | 2025-10-09 22:38:24 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:38:24 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 22:41:46 | 'gz' requested for login access token.
+[32mINFO[0m:     | 2025-10-09 22:41:46 | Successful login!
+[32mINFO[0m:     | 2025-10-09 22:41:47 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:41:47 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:41:47 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:41:47 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 22:41:50 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:41:50 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:41:50 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 22:41:50 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-09 22:41:54 | User 'gz' requested to delete a SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 22:41:56 | Successfully deleted SDN VNET 'hha'.
+[32mINFO[0m:     | 2025-10-09 22:41:56 | User 'gz' requested to delete a SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 22:41:57 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:41:57 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 22:41:57 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:41:57 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-09 22:41:58 | Successfully deleted SDN VNET 'vnet2'.
+[32mINFO[0m:     | 2025-10-09 22:41:59 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 22:41:59 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:41:59 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-09 22:41:59 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:42:00 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:42:00 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:42:00 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:42:00 | Successfully retrieved 5 VMs.
+[32mINFO[0m:     | 2025-10-09 22:42:04 | User 'gz' requested to launch/instantiate lab.
+[32mINFO[0m:     | 2025-10-09 22:42:06 | New SDN Vnet 'vnet1' Created.
+[32mINFO[0m:     | 2025-10-09 22:42:10 | Lab 'etst1' instance 1 instantiated successfully on VNET 'vnet1'. Created VMs: [{'name': 'etst1-paopa-1000', 'id': 1000}, {'name': 'etst1-ubutnapa-1001', 'id': 1001}]
+[32mINFO[0m:     | 2025-10-09 22:42:14 | User 'gz' requested to launch/instantiate lab.
+[32mINFO[0m:     | 2025-10-09 22:42:16 | New SDN Vnet 'vnet2' Created.
+[32mINFO[0m:     | 2025-10-09 22:42:20 | Lab 'etst1' instance 2 instantiated successfully on VNET 'vnet2'. Created VMs: [{'name': 'etst1-paopa-2000', 'id': 2000}, {'name': 'etst1-ubutnapa-2001', 'id': 2001}]
+[32mINFO[0m:     | 2025-10-09 22:42:21 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:42:21 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:42:24 | User 'gz' requested to list snapshot for VM 1001
+[32mINFO[0m:     | 2025-10-09 22:42:24 | Succesfully retrieved snapshot for VM 1001
+[32mINFO[0m:     | 2025-10-09 22:42:24 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 22:42:24 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 22:42:44 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:42:44 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:43:07 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:43:07 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:43:12 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:43:12 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:43:16 | User 'gz' requested to list snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 22:43:17 | Succesfully retrieved snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 22:43:17 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 22:43:17 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 22:43:19 | User 'gz' requested to list snapshot for VM 2001
+[32mINFO[0m:     | 2025-10-09 22:43:19 | Succesfully retrieved snapshot for VM 2001
+[32mINFO[0m:     | 2025-10-09 22:43:19 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 22:43:19 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 22:43:21 | User 'gz' requested to list snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 22:43:21 | Succesfully retrieved snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 22:43:21 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 22:43:21 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 22:43:28 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:43:28 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:43:29 | User 'gz' requested to list snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 22:43:29 | Succesfully retrieved snapshot for VM 101
+[32mINFO[0m:     | 2025-10-09 22:43:30 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 22:43:30 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 22:43:32 | User 'gz' requested to start vlan lab etst1_cloned1.
+[32mINFO[0m:     | 2025-10-09 22:43:32 | Start command sent to all VMs in lab 'etst1_cloned1'. Started VMs: ['etst1-paopa-1000', 'papa2', 'paopa-clone-2003']
+[32mINFO[0m:     | 2025-10-09 22:43:35 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:43:35 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:43:38 | User 'gz' requested to stop vlan lab etst1_cloned1.
+[32mINFO[0m:     | 2025-10-09 22:43:38 | Stop command sent to all VMs in lab 'etst1_cloned1'. Started VMs: ['etst1-paopa-1000', 'paopa-clone-2003', 'papa2']
+[32mINFO[0m:     | 2025-10-09 22:43:41 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:43:42 | Successfully retrieved 9 VMs.
+[32mINFO[0m:     | 2025-10-09 22:43:48 | User 'gz' requested to delete vlan lab.
+[32mINFO[0m:     | 2025-10-09 22:43:54 | Successfully deleted lab 'etst1_cloned2' and VNET 'vnet2'. Deleted VMs: ['etst1-paopa-2000', 'etst1-ubutnapa-2001']
+[32mINFO[0m:     | 2025-10-09 22:43:59 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:43:59 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 22:44:16 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:44:16 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 22:44:17 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:44:17 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:44:17 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:44:17 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 22:44:18 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-09 22:44:18 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-09 22:44:18 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-09 22:44:18 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-09 22:44:19 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-09 22:44:19 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-09 22:44:19 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:44:19 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 22:44:37 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:44:37 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 22:44:40 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:44:40 | Successfully retrieved 7 VMs.
+[32mINFO[0m:     | 2025-10-09 22:44:45 | User 'gz' requested to delete vlan lab.
+[32mINFO[0m:     | 2025-10-09 22:44:55 | Successfully deleted lab 'etst1_cloned1' and VNET 'vnet1'. Deleted VMs: ['etst1-ubutnapa-1001', 'etst1-paopa-1000', 'papa2', 'paopa-clone-2003']
+[32mINFO[0m:     | 2025-10-09 22:45:00 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:45:00 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-09 22:45:02 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-09 22:45:02 | Successfully retrieved 3 VMs.
+[32mINFO[0m:     | 2025-10-09 22:45:06 | User 'gz' requested to delete all cloned VM templates.
+[32mINFO[0m:     | 2025-10-09 22:45:07 | Cleanup process completed. Deleted VMs: ['ubutnapa-clone-2004']
+                                                                                                                                                                                                                                                        [32mINFO[0m:     | 2025-10-10 01:13:06 | 'gz' requested for login access token.
+[32mINFO[0m:     | 2025-10-10 01:13:06 | Successful login!
+[32mINFO[0m:     | 2025-10-10 01:13:08 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-10 01:13:08 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-10 01:13:08 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-10 01:13:08 | Successfully retrieved 4 VMs.
+[32mINFO[0m:     | 2025-10-10 01:13:09 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-10 01:13:09 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-10 01:13:09 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-10 01:13:09 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-10 01:13:14 | User 'gz' requested to delete a SDN Vnets.
+[32mINFO[0m:     | 2025-10-10 01:13:16 | Successfully deleted SDN VNET 'vnet2'.
+[32mINFO[0m:     | 2025-10-10 01:13:18 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-10 01:13:18 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-10 01:13:18 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-10 01:13:18 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-10 01:13:24 | User 'gz' requested to delete a SDN Vnets.
+[32mINFO[0m:     | 2025-10-10 01:13:26 | Successfully deleted SDN VNET 'vnet3'.
+[32mINFO[0m:     | 2025-10-10 01:13:27 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-10 01:13:27 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-10 01:13:27 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-10 01:13:27 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-10 01:13:35 | User 'gz' requested to delete a SDN Vnets.
+[32mINFO[0m:     | 2025-10-10 01:13:37 | Successfully deleted SDN VNET 'vnet4'.
+[32mINFO[0m:     | 2025-10-10 01:13:45 | User 'gz' requested to list all SDN Vnets.
+[32mINFO[0m:     | 2025-10-10 01:13:45 | Retreving SDN Vnets.......
+[32mINFO[0m:     | 2025-10-10 01:13:45 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-10 01:13:45 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-10 01:13:46 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-10 01:13:46 | Successfully retrieved 4 VMs.
+[32mINFO[0m:     | 2025-10-10 01:13:46 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-10 01:13:46 | User 'gz' requested to list all SDN Zones.
+[32mINFO[0m:     | 2025-10-10 01:13:46 | Retrieval of SDN Zones...........
+[32mINFO[0m:     | 2025-10-10 01:13:46 | Successfully retrieved 4 VMs.
+[32mINFO[0m:     | 2025-10-10 01:13:50 | User 'gz' requested to launch/instantiate lab.
+[32mINFO[0m:     | 2025-10-10 01:13:52 | New SDN Vnet 'vnet1' Created.
+[32mINFO[0m:     | 2025-10-10 01:13:56 | Lab 'papa' instance 1 instantiated successfully on VNET 'vnet1'. Created VMs: [{'name': 'papa-paopa-1000', 'id': 1000}, {'name': 'papa-ubutnapa-1001', 'id': 1001}]
+[32mINFO[0m:     | 2025-10-10 01:14:02 | User 'gz' requested to launch/instantiate lab.
+[32mINFO[0m:     | 2025-10-10 01:14:04 | New SDN Vnet 'vnet2' Created.
+[32mINFO[0m:     | 2025-10-10 01:14:08 | Lab 'papa' instance 2 instantiated successfully on VNET 'vnet2'. Created VMs: [{'name': 'papa-paopa-2000', 'id': 2000}, {'name': 'papa-ubutnapa-2001', 'id': 2001}]
+[32mINFO[0m:     | 2025-10-10 01:14:11 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-10 01:14:11 | Successfully retrieved 8 VMs.
+[32mINFO[0m:     | 2025-10-10 01:14:17 | User '<app.models.User object at 0x7fcc20eb5c70>' is requesting to edit Lab 'papa_cloned1'.
+[32mINFO[0m:     | 2025-10-10 01:14:17 | Successfully updated members for lab papa_cloned1.
+[32mINFO[0m:     | 2025-10-10 01:14:17 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-10 01:14:17 | Successfully retrieved 8 VMs.
+[32mINFO[0m:     | 2025-10-10 01:14:21 | User 'gz' requested to list snapshot for VM 1001
+[32mINFO[0m:     | 2025-10-10 01:14:21 | Succesfully retrieved snapshot for VM 1001
+[32mINFO[0m:     | 2025-10-10 01:14:21 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-10 01:14:21 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-10 01:14:22 | User 'gz' requested to list snapshot for VM 101
+[32mINFO[0m:     | 2025-10-10 01:14:22 | Succesfully retrieved snapshot for VM 101
+[32mINFO[0m:     | 2025-10-10 01:14:22 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-10 01:14:22 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-10 01:14:27 | User '<app.models.User object at 0x7fcc20eb5760>' is requesting to edit Lab 'papa_cloned2'.
+[32mINFO[0m:     | 2025-10-10 01:14:27 | Successfully updated members for lab papa_cloned2.
+[32mINFO[0m:     | 2025-10-10 01:14:27 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-10 01:14:27 | Successfully retrieved 8 VMs.
+[32mINFO[0m:     | 2025-10-10 01:14:29 | User 'gz' requested to list snapshot for VM 101
+[32mINFO[0m:     | 2025-10-10 01:14:29 | Succesfully retrieved snapshot for VM 101
+[32mINFO[0m:     | 2025-10-10 01:14:29 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-10 01:14:29 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-10 01:14:31 | User 'gz' requested to list snapshot for VM 2000
+[32mINFO[0m:     | 2025-10-10 01:14:31 | Succesfully retrieved snapshot for VM 2000
+[32mINFO[0m:     | 2025-10-10 01:14:31 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-10 01:14:31 | Retrieving all network bridges.......
+[32mINFO[0m:     | 2025-10-10 01:14:36 | User '<app.models.User object at 0x7fcc20eb5af0>' is requesting to edit Lab 'papa_cloned1'.
+[32mINFO[0m:     | 2025-10-10 01:14:36 | Successfully updated members for lab papa_cloned1.
+[32mINFO[0m:     | 2025-10-10 01:14:36 | User 'gz' requested to list all VMs.
+[32mINFO[0m:     | 2025-10-10 01:14:36 | Successfully retrieved 8 VMs.
+[32mINFO[0m:     | 2025-10-10 01:14:37 | User 'gz' requested to list snapshot for VM 101
+[32mINFO[0m:     | 2025-10-10 01:14:37 | Succesfully retrieved snapshot for VM 101
+[32mINFO[0m:     | 2025-10-10 01:14:37 | User 'gz' requested to list all networks bridge.
+[32mINFO[0m:     | 2025-10-10 01:14:37 | Retrieving all network bridges.......

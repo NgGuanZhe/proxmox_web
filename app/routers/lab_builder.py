@@ -88,27 +88,34 @@ def instantiate_lab(request: LabInstantiateRequest, current_user: dict = Depends
             logger.error(f"Failed to create SDN VNET (Normally is vnet tag alr exist): {save_error(vnet_error)}")
             raise Exception("Failed to create SDN VNET. Proxmox Error: {}".format(vnet_error))
         
-        # 2. Find templates and calculate next VMID
+        # 2. Find existing instances to determine the next instance number
         all_vms = []
         for node in nodes:
-            all_vms.extend(proxmox.nodes(node['node']).qemu.get())
-        existing_ids = {vm['vmid'] for vm in all_vms}
-        
+            for vm_summary in proxmox.nodes(node['node']).qemu.get():
+                all_vms.append({**vm_summary, 'node': node['node']})
+
         highest_instance = 0
         for vm_summary in all_vms:
-            node_name_check = _find_vm_node_by_id(proxmox, vm_summary.get('vmid'))
-            if not node_name_check: continue
-            config = proxmox.nodes(node_name_check).qemu(vm_summary['vmid']).config.get()
-            tags = _parse_tags_from_description(config.get('description', ''))
-            if tags.get('lab_name') == request.lab_group:
-                if tags.get('lab_instance') > highest_instance:
-                    highest_instance = tags.get('lab_instance')
+            config = proxmox.nodes(vm_summary['node']).qemu(vm_summary['vmid']).config.get()
+            desc = config.get('description', '')
+            desc_match = re.search(r"Lab: (.*?) \| Instance: (\d+)", desc)
+            if desc_match:
+                # Normalize the lab name from the description before comparing
+                lab_name_from_desc = desc_match.group(1).replace(' clone', '').replace(' added', '')
+                instance_num_from_desc = int(desc_match.group(2))
+                
+                if lab_name_from_desc == request.lab_group:
+                    if instance_num_from_desc > highest_instance:
+                        highest_instance = instance_num_from_desc
+        
         next_instance_num = highest_instance + 1
         
+        # 3. Determine starting VMID for the new instance
+        existing_ids = {vm['vmid'] for vm in all_vms}
         vmid_prefix = next_instance_num * 1000
-        next_vmid = vmid_prefix + 1
+        next_vmid = vmid_prefix
 
-        # 3. Clone and reconfigure
+        # 4. Clone and reconfigure
         created_vms = []
         for node in nodes:
             node_name = node['node']
@@ -123,7 +130,7 @@ def instantiate_lab(request: LabInstantiateRequest, current_user: dict = Depends
                         
                         template_id = template_summary['vmid']
                         new_clone_name = "{}-{}-{}".format(request.lab_group.lower(), template_summary.get('name', 'vm'), next_vmid)
-                        clone_description = "Lab: {} | Instance: {}".format(request.lab_group, next_instance_num)
+                        clone_description = "Lab: {} clone | Instance: {}".format(request.lab_group, next_instance_num)
                         
                         # Step A: Clone the VM
                         proxmox.nodes(node_name).qemu(template_id).clone.post(newid=next_vmid, name=new_clone_name, full=0, description=clone_description)
@@ -152,3 +159,5 @@ def instantiate_lab(request: LabInstantiateRequest, current_user: dict = Depends
     except Exception as e:
         logger.error(f"An error occurred: {save_error(e)}.")
         raise HTTPException(status_code=500, detail="An error occurred: {}".format(e))
+
+
