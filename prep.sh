@@ -29,6 +29,9 @@ if [ -z "$IP_ADDR" ]; then
 fi
 
 # ----------------------------
+cat << EOF > app.log
+"Creating logging file"
+EOF
 
 # --- Create the backend .env file ---
 cat << EOF > .env
