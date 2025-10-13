@@ -171,6 +171,30 @@ async function instantiateLab() {
             </div>
             <div v-if="launchStatus" class="status-box success">
               <p>{{ launchStatus.message }}</p>
+              <div v-if="launchStatus.cloned_vms && launchStatus.cloned_vms.length > 0">
+                <strong>New VMs Created:</strong>
+                <ul>
+                  <li v-for="vm in launchStatus.cloned_vms" :key="vm.id">
+                    {{ vm.name }} (ID: {{ vm.id }})
+                  </li>
+                </ul>
+              </div>
+              <div v-if="launchStatus.added_vms && launchStatus.added_vms.length > 0">
+                <strong>Existing VMs Added:</strong>
+                <ul>
+                  <li v-for="vm in launchStatus.added_vms" :key="vm.id">
+                    {{ vm.name }} (ID: {{ vm.id }})
+                  </li>
+                </ul>
+              </div>
+              <div v-if="launchStatus.failed_to_add_vms && launchStatus.failed_to_add_vms.length > 0" class="status-box error">
+                 <strong>Failed to Add VMs:</strong>
+                <ul>
+                  <li v-for="vm in launchStatus.failed_to_add_vms" :key="vm.name">
+                    {{ vm.name }} (Reason: {{ vm.reason }})
+                  </li>
+                </ul>
+              </div>
             </div>
           </section>
 
@@ -251,6 +275,8 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
 .placeholder { text-align: center; color: var(--text-muted); padding: 4rem; background-color: var(--bg-light); border-radius: 8px; border: 1px dashed var(--border-color); }
 .status-box { padding: 1rem; margin-top: 1.5rem; border-radius: 5px; text-align: left; }
 .status-box.success { background-color: #e8f5e9; color: #2e7d32; }
+.status-box.error { background-color: #ffebee; color: #c62828; margin-top: 1rem; }
+.status-box ul { padding-left: 20px; margin-top: 0.5rem; }
 .empty-text { color: var(--text-muted); font-style: italic; }
 .template-badge {
   background-color: #ffc107;
@@ -262,3 +288,4 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   margin-left: 8px;
 }
 </style>
+
