@@ -30,7 +30,7 @@ fi
 
 # ----------------------------
 cat << EOF > app.log
-"Creating logging file"
+"Logged File Created"
 EOF
 
 # --- Create the backend .env file ---
