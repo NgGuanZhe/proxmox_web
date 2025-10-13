@@ -1,6 +1,8 @@
 import re
 import uuid
 import logging
+import os # <-- 1. ADD THIS LINE
+from dotenv import load_dotenv # <-- 2. ADD THIS LINE
 from app.logging_helper import save_error
 from datetime import datetime, timedelta, timezone
 from typing import Union, List
@@ -17,10 +19,15 @@ from sqlalchemy.orm import Session
 from .. import models
 from ..database import SessionLocal
 
+load_dotenv()
+
 # --- Configuration (unchanged) ---
-SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+if SECRET_KEY is None:
+    raise ValueError("SECRET_KEY not found in environment. Make sure you have a .env file with the SECRET_KEY set.")
 
 # --- Setup ---
 logger = logging.getLogger("proxmox_api")
