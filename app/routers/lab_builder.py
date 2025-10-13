@@ -153,7 +153,8 @@ def instantiate_lab(request: LabInstantiateRequest, current_user: dict = Depends
                             model_and_mac = net0_config.split(',')[0]
                             new_net_config_str = "{},bridge={}".format(model_and_mac, new_vnet_name)
                             new_vm.config.put(net0=new_net_config_str)
-
+                        #START VM FOR NEW CLONED VM
+                        new_vm.status.start.post()
                         created_vms.append({"name": new_clone_name, "id": next_vmid})
                         next_vmid += 1
                     # If it's a regular VM, "consume" it if not busy
@@ -173,7 +174,8 @@ def instantiate_lab(request: LabInstantiateRequest, current_user: dict = Depends
                                     vm.config.put(description=new_description, net0=new_net_config_str)
                                 else:
                                     vm.config.put(description=new_description)
-                                
+                                #FOR EXISTING VM
+                                vm.status.start.post()
                                 created_vms.append({"name": vm_summary.get('name'), "id": vm_id})
 
 

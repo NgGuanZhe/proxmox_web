@@ -106,9 +106,16 @@ def update_lab_members(lab_group_name: str, request: LabMemberUpdateRequest, cur
             node_name = _find_vm_node_by_id(proxmox, vmid)
             if node_name:
                 vm = proxmox.nodes(node_name).qemu(vmid)
+                current_config = vm.config.get()
                 current_desc = vm.config.get().get('description', '')
                 new_desc = _clear_lab_description(current_desc)
-                vm.config.put(description=new_desc)
+                net0_config_str = current_config.get('net0', '')
+                if net0_config_str:
+                    model_and_mac = net0_config_str.split(',')[0]
+                    new_net_config = f"{model_and_mac},bridge=vmbr0"
+                    vm.config.put(description=new_desc, net0=new_net_config)
+                else:
+                    vm.config.put(description=new_desc)
         logger.info(f"Successfully updated members for lab {lab_group_name}.")
         return {"message": f"Successfully updated members for lab {lab_group_name}."}
 
