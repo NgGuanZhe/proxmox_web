@@ -125,7 +125,10 @@ def instantiate_lab(request: LabInstantiateRequest, current_user: dict = Depends
         next_vmid = vmid_prefix
 
         # 4. Clone and reconfigure
-        created_vms = []
+        cloned_vms = []
+        added_vms = []
+        failed_to_add_vms = []
+
         for node in nodes:
             node_name = node['node']
             for vm_summary in proxmox.nodes(node_name).qemu.get():
@@ -155,7 +158,7 @@ def instantiate_lab(request: LabInstantiateRequest, current_user: dict = Depends
                             new_vm.config.put(net0=new_net_config_str)
                         #START VM FOR NEW CLONED VM
                         new_vm.status.start.post()
-                        created_vms.append({"name": new_clone_name, "id": next_vmid})
+                        cloned_vms.append({"name": new_clone_name, "id": next_vmid})
                         next_vmid += 1
                     # If it's a regular VM, "consume" it if not busy
                     else:
@@ -176,16 +179,24 @@ def instantiate_lab(request: LabInstantiateRequest, current_user: dict = Depends
                                     vm.config.put(description=new_description)
                                 #FOR EXISTING VM
                                 vm.status.start.post()
-                                created_vms.append({"name": vm_summary.get('name'), "id": vm_id})
+                                added_vms.append({"name": vm_summary.get('name'), "id": vm_id})
+                        else:
+                            failed_to_add_vms.append({"name": vm_summary.get('name'), "reason": "Already part of another lab"})
 
 
-        if not created_vms:
+        if not cloned_vms and not added_vms:
             proxmox.cluster.sdn.vnets(new_vnet_name).delete()
             proxmox.cluster.sdn.put()
             logger.error(f"No available templates or VMs found in lab group '{request.lab_group}'. Deleting newly created Vnet {new_vnet_name}.")
             raise HTTPException(status_code=404, detail="No available templates or VMs found in lab group '{}'.".format(request.lab_group))
-        logger.info(f"Lab '{request.lab_group}' instance {next_instance_num} instantiated successfully on VNET '{new_vnet_name}'. Created VMs: {created_vms}")
-        return {"message": "Lab '{}' instance {} instantiated successfully on VNET '{}'.".format(request.lab_group, next_instance_num, new_vnet_name), "created_vms": created_vms}
+        logger.info(f"Lab '{request.lab_group}' instance {next_instance_num} instantiated successfully on VNET '{new_vnet_name}'.")
+        return {
+            "message": "Lab '{}' instance {} instantiated successfully on VNET '{}'.".format(request.lab_group, next_instance_num, new_vnet_name),
+            "cloned_vms": cloned_vms,
+            "added_vms": added_vms,
+            "failed_to_add_vms": failed_to_add_vms
+        }
     except Exception as e:
         logger.error(f"An error occurred: {save_error(e)}.")
         raise HTTPException(status_code=500, detail="An error occurred: {}".format(e))
+

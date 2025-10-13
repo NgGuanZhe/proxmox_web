@@ -28,7 +28,7 @@ def _clear_lab_description(existing_desc: str) -> str:
 
 @router.put("/labs/{lab_group_name}/members", tags=["Labs"])
 def update_lab_members(lab_group_name: str, request: LabMemberUpdateRequest, current_user: dict = Depends(get_current_active_user)):
-    logger.info(f"User '{current_user}' is requesting to edit Lab '{lab_group_name}'.")
+    logger.info(f"User '{current_user.username}' is requesting to edit Lab '{lab_group_name}'.")
     """
     Updates the list of VMs in a lab group.
     Adds specified VMs and removes any not in the list.
@@ -90,7 +90,7 @@ def update_lab_members(lab_group_name: str, request: LabMemberUpdateRequest, cur
                 
                 # Set description to 'added'
                 new_desc = f"{_clear_lab_description(current_desc)}\nLab: {lab_name} added | Instance: {instance_num}".strip()
-                
+                logger.info(f"Added VM{vmid} to lab {lab_name}.")
                 # Reconfigure network
                 net0_config_str = current_config.get('net0', '')
                 new_net_config = ""
@@ -109,6 +109,7 @@ def update_lab_members(lab_group_name: str, request: LabMemberUpdateRequest, cur
                 current_config = vm.config.get()
                 current_desc = vm.config.get().get('description', '')
                 new_desc = _clear_lab_description(current_desc)
+                logger.info(f"Removed VM{vmid} from lab {lab_name}.")
                 net0_config_str = current_config.get('net0', '')
                 if net0_config_str:
                     model_and_mac = net0_config_str.split(',')[0]
@@ -338,7 +339,7 @@ def stop_lab(lab_group_name: str, current_user: dict = Depends(get_current_activ
                         if vm_summary.get('status') == 'running':
                             proxmox.nodes(node_name).qemu(vmid).status.stop.post()
                             stopped_vms.append(vm_summary.get('name'))
-        logger.info(f"Stop command sent to all VMs in lab '{lab_group_name}'. Started VMs: {stopped_vms}")
+        logger.info(f"Stop command sent to all VMs in lab '{lab_group_name}'. Stopped VMs: {stopped_vms}")
         return {"message": "Stop command sent to all VMs in lab '{}'.".format(lab_group_name), "stopped_vms": stopped_vms}
     except Exception as e:
         logger.error(f"An error occurred while stopping the lab: {save_error(e)}.")
