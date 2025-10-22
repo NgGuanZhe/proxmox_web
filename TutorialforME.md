@@ -13,3 +13,9 @@ ONLY WORKS ON LOCAL NETWORK???
 - Step 11: Log checking can be done by tail -f app.log
 
 Its not a read me ah im jus writing so i wont forget.
+
+How to make admin in db:
+Step 1: Ensure you have run the backend and frontend alr so the db is created.
+Step 2: sqlite3 sql_app.db
+Step 3: UPDATE users SET is_admin = 1 WHERE username = 'the_username_to_make_admin'; (need to register acc first pls)
+Step 4: SELECT id, username, is_admin FROM users WHERE username = 'the_username_to_make_admin';
